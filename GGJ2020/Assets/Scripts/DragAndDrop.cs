@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using System.Text.RegularExpressions;
 
 public class DragAndDrop : MonoBehaviour
     , IPointerClickHandler
@@ -15,17 +16,32 @@ public class DragAndDrop : MonoBehaviour
     [SerializeField] Sprite robotSprite;
     GameObject newRobotIcon;
     bool isDragged = false;
+    bool isUsed;
 
     RobotSelectionManager robotSelectionManager;
+    CraftingManager craftingManager;
 
     [SerializeField] GameObject panel1;
     [SerializeField] GameObject panel2;
     [SerializeField] GameObject panel3;
 
+    int robotIndex;
+
     // Start is called before the first frame update
     void Start()
     {
         robotSelectionManager = GameObject.FindWithTag("RobotSelectionManager").GetComponent<RobotSelectionManager>();
+        craftingManager = GameObject.FindWithTag("CraftingManager").GetComponent<CraftingManager>();
+        robotIndex = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+
+        if (craftingManager.HasBeenDiscovered[robotIndex - 1])
+        {
+            GetComponent<Image>().color = Color.white;
+        }
+        else
+        {
+            GetComponent<Image>().color = Color.black;
+        }
     }
 
     // Update is called once per frame
@@ -43,6 +59,43 @@ public class DragAndDrop : MonoBehaviour
             newRobotIcon.GetComponent<RectTransform>().localPosition.x,
                 newRobotIcon.GetComponent<RectTransform>().localPosition.y,
             0);
+        }
+
+        int tmp = 0;
+        for (int i = 0; i < 3; i++)
+        {
+            if (craftingManager.RobotSlot[i] == robotIndex)
+            {
+                tmp++;
+            }
+        }
+
+        DebugText.Text(transform.position, tmp.ToString());
+        //Debug.Log(tmp);
+        if (robotIndex == 1)
+        {
+            //  Debug.Log(tmp);
+        }
+        if (tmp > 0)
+        {
+            isUsed = true;
+        }
+        else
+        {
+            isUsed = false;
+        }
+
+        if (isUsed)
+        {
+            GetComponent<Image>().color = new Color32(100, 100, 100, 100);
+        }
+        else if (craftingManager.HasBeenDiscovered[robotIndex - 1])
+        {
+            GetComponent<Image>().color = Color.white;
+        }
+        else
+        {
+            GetComponent<Image>().color = Color.black;
         }
     }
 
@@ -84,6 +137,8 @@ public class DragAndDrop : MonoBehaviour
             Destroy(newRobotIcon.gameObject);
             panel1.GetComponent<Image>().sprite = robotSprite;
             panel1.GetComponent<Image>().color = Color.white;
+            craftingManager.RobotSlot[0] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+            //Debug.Log(int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", "")));
         }
 
         if (robotSelectionManager.TouchingPanel2)
@@ -91,6 +146,7 @@ public class DragAndDrop : MonoBehaviour
             Destroy(newRobotIcon.gameObject);
             panel2.GetComponent<Image>().sprite = robotSprite;
             panel2.GetComponent<Image>().color = Color.white;
+            craftingManager.RobotSlot[1] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
         }
 
         if (robotSelectionManager.TouchingPanel3)
@@ -98,6 +154,7 @@ public class DragAndDrop : MonoBehaviour
             Destroy(newRobotIcon.gameObject);
             panel3.GetComponent<Image>().sprite = robotSprite;
             panel3.GetComponent<Image>().color = Color.white;
+            craftingManager.RobotSlot[2] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
         }
     }
 

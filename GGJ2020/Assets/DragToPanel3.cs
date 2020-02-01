@@ -22,11 +22,17 @@ public class DragToPanel3 : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        Debug.Log(collision.gameObject.name);
+        //Debug.Log(collision.gameObject.name);
         if (collision.gameObject.name.Contains("Icon Panel"))
         {
             robotSelectionManager.TouchingPanel3 = true;
             icon = collision.gameObject.GetComponent<Image>().sprite;
+        }
+
+        if (collision.gameObject.name.Contains("Icon Crystal Panel"))
+        {
+            robotSelectionManager.TouchingPanel3Crystal = true;
+            //icon = collision.gameObject.GetComponent<Image>().sprite;
         }
     }
 
@@ -35,6 +41,12 @@ public class DragToPanel3 : MonoBehaviour
         if (collision.gameObject.name.Contains("Icon Canvas"))
         {
             robotSelectionManager.TouchingPanel3 = false;
+        }
+
+        if (collision.gameObject.name.Contains("Icon Crystal Panel"))
+        {
+            robotSelectionManager.TouchingPanel3Crystal = false;
+            //icon = collision.gameObject.GetComponent<Image>().sprite;
         }
     }
 

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PanelsRobots
   - RobotSelectionManager
+  - Crafting Manager
+  - CraftingManager
   layers:
   - Default
   - TransparentFX
