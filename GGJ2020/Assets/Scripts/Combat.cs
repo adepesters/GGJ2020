@@ -2,11 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public struct Robot {
+public struct Actor {
     public int x;
     public int y;
     public int current_hp;
+}
+
+public struct Robot {
+    public Actor actor;
     public RobotView view;
+}
+
+public struct Rock {
+    public Actor actor;
+    public Transform view;
 }
 
 public class Combat : MonoBehaviour
@@ -14,7 +23,7 @@ public class Combat : MonoBehaviour
     public Transform _grassTile;
     public Transform _rock;
     public Transform _selectionFrame;
-    public Transform _robotTemplate;
+    public RobotView _robotTemplate;
 
     const int board_size = 8;
     const int tile_count = board_size * board_size;
@@ -27,10 +36,32 @@ public class Combat : MonoBehaviour
     Vector2 offset_y = new Vector2(offset_w, offset_h);
 
     public List<Robot> _robots = new List<Robot>();
+    public List<Rock> _rocks = new List<Rock>();
+
+    public int _selected_robot = 0;
 
     void Start()
     {
+        _robotTemplate.gameObject.SetActive(false);
+        AddRobot(3, 1);
         GenerateTerrain();
+    }
+
+    void AddRobot(int x, int y)
+    {
+        Robot robot = new Robot();
+        robot.actor.x = x;
+        robot.actor.y = y;
+        robot.view = Instantiate(_robotTemplate, transform);
+        robot.view.gameObject.SetActive(true);
+        _robots.Add(robot);
+    }
+
+    Vector2 GetTilePos(int x, int y)
+    {
+        Vector2 origin = new Vector2(-offset_w * (board_size - 1), 0f);
+        Vector2 pos = origin + offset_x * x + offset_y * y;
+        return pos;
     }
 
     void GenerateTerrain()
@@ -42,15 +73,20 @@ public class Combat : MonoBehaviour
         Vector2 origin = new Vector2(-offset_w * (board_size - 1), 0f);
         for (int y = 0; y < board_size; y++) {
             for (int x = 0; x < board_size; x++) {
-                Vector2 pos = origin + offset_x * x + offset_y * y;
+                Vector2 pos = GetTilePos(x, y);
                 var tile = Instantiate(_grassTile, transform);
                 tile.transform.localPosition = pos;
                 tile.gameObject.SetActive(true);
 
                 if (Random.value < 0.2f) {
-                    var rock = Instantiate(_rock, transform);
-                    rock.transform.localPosition = pos;
-                    rock.gameObject.SetActive(true);
+                    var rockView = Instantiate(_rock, transform);
+                    rockView.transform.localPosition = pos;
+                    rockView.gameObject.SetActive(true);
+                    var rock = new Rock();
+                    rock.actor.x = x;
+                    rock.actor.y = y;
+                    rock.view = rockView;
+                    _rocks.Add(rock);
                 }
                 var selectionFrame = Instantiate(_selectionFrame, transform);
                 selectionFrame.transform.localPosition = pos;
@@ -58,11 +94,6 @@ public class Combat : MonoBehaviour
 
                 _selectionFrames[y * board_size + x] = selectionFrame.GetComponent<SpriteRenderer>();
             }
-        }
-
-        for (int i = 0; i < _robots.Count; i++) {
-            var robot = _robots[i];
-            var view = robot.view;
         }
     }
 
@@ -81,18 +112,59 @@ public class Combat : MonoBehaviour
             hovered_tile = hovered_y * board_size + hovered_x;
         }
 
-        
-        print("hovered " + hovered_tile);
+        bool hovered_tile_is_free = IsTileFree(hovered_tile);
 
         for (int i = 0, y = 0; y < board_size; y++) {
             for (int x = 0; x < board_size; x++, i++) {
                 var frame = _selectionFrames[i];
                 frame.enabled = hovered_tile == i;
+                frame.color = hovered_tile_is_free ? Color.white : Color.red;
             }
         }
 
         DebugText.Text(screen_pos, $"{hovered_x} ; {hovered_y}");
         Debug.DrawLine(tiles_origin_pos, tiles_origin_pos + delta_pos, Color.red);
+
+
+        if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free) {
+            var robot = _robots[_selected_robot];
+            robot.actor.x = hovered_x;
+            robot.actor.y = hovered_y;
+            _robots[_selected_robot] = robot;
+        }
+
+        for (int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            var view = robot.view;
+
+            view.transform.position = GetTilePos(robot.actor.x, robot.actor.y);
+        }
+    }
+
+    bool IsTileFree(int index)
+    {
+        for(int i = 0; i < _rocks.Count; i++) {
+            var actor = _rocks[i].actor;
+            if (CoordsToIndex(actor.x, actor.y) == index) {
+                return false;
+            }
+        }
+        for(int i = 0; i < _robots.Count; i++) {
+            var actor = _robots[i].actor;
+            if (CoordsToIndex(actor.x, actor.y) == index) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    int CoordsToIndex(int x, int y)
+    {
+        if (x >= 0 && y >= 0 && x < board_size && y < board_size) {
+            return y * board_size + x;
+        } else {
+            return -1; // outside game board
+        }
     }
 
     // void DrawScreenLine(Vector3 a, Vector3 b)
