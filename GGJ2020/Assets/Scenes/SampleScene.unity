@@ -120,6 +120,49 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &88841393
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 88841395}
+  - component: {fileID: 88841394}
+  m_Layer: 0
+  m_Name: Debug text
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &88841394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88841393}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 972ff20a029f94e41914c82175c27872, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &88841395
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 88841393}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -73.94293, y: -91.42696, z: -151.03607}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &571847056900660654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -206,6 +249,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Atelier
       objectReference: {fileID: 0}
+    - target: {fileID: 2704457644555634744, guid: 5dbdb01c7f62b4f019dbf209fdf6191a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6888035282739485897, guid: 5dbdb01c7f62b4f019dbf209fdf6191a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -276,6 +324,10 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 7519560630231532010}
+    - target: {fileID: 122317656, guid: 5dbdb01c7f62b4f019dbf209fdf6191a, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -123
+      objectReference: {fileID: 0}
     - target: {fileID: 1379836731, guid: 5dbdb01c7f62b4f019dbf209fdf6191a, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: -464

@@ -42,6 +42,9 @@ TagManager:
   - name: Ground
     uniqueID: 2722435529
     locked: 0
+  - name: Selection Frame
+    uniqueID: 927586691
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
