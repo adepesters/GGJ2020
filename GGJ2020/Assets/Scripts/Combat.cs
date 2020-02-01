@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 public struct Actor {
     public int x;
     public int y;
     public int current_hp;
+    public int max_hp;
     public int movement_range;
+    public List<int> plop;
 }
 
 public struct Robot {
@@ -31,6 +34,7 @@ public class Combat : MonoBehaviour
     public Transform _grassTile;
     public Transform _waterTile;
     public Transform _rock;
+    public Transform _column;
     public Transform _selectionFrame;
     public RobotView _robotTemplate;
 
@@ -86,14 +90,14 @@ public class Combat : MonoBehaviour
     "O...^..O" +
     "O.X..X.O" +
     "___..___" +
-    "O......O" +
-    "O......O" +
+    "OI....IO" +
+    "O..+...O" +
     "O.+..+.O" +
     "OOOOOOOO";
 
     void Start()
     {
-        _robotTemplate.gameObject.SetActive(false);
+        _robotTemplate.gameObject.SetActive(false);        
         
         GenerateTerrain();
 
@@ -112,6 +116,8 @@ public class Combat : MonoBehaviour
         robot.actor.x = x;
         robot.actor.y = y;
         robot.actor.movement_range = movement_range;
+        robot.actor.max_hp = 3;
+        robot.actor.current_hp = 3;
         robot.view = Instantiate(_robotTemplate, tiles_container);
         robot.view.gameObject.SetActive(true);
         _robots.Add(robot);
@@ -141,7 +147,9 @@ public class Combat : MonoBehaviour
         _selectionFrames = new SpriteRenderer[_tile_count];
 
         _grassTile.gameObject.SetActive(false);
+        _waterTile.gameObject.SetActive(false);
         _rock.gameObject.SetActive(false);
+        _column.gameObject.SetActive(false);
         _selectionFrame.gameObject.SetActive(false);
 
         Vector2 origin = new Vector2(-offset_w * (_board_size - 1), 0f);
@@ -176,6 +184,11 @@ public class Combat : MonoBehaviour
                     rock.actor.y = y;
                     rock.view = rockView;
                     _rocks.Add(rock);
+                }
+                if (tile_char == COLUMN) {
+                    var columnView = Instantiate(_column, tiles_container);
+                    columnView.transform.localPosition = pos;
+                    columnView.gameObject.SetActive(true);
                 }
                 var selectionFrame = Instantiate(_selectionFrame, tiles_container);
                 selectionFrame.transform.localPosition = pos;
@@ -240,7 +253,7 @@ public class Combat : MonoBehaviour
                 break;
             }
             attackable[index] = group_id;
-            if (!IsTileFree(index)) {
+            if (!IsTileFree(index, allow_water: true)) {
                 break;
             }
         }
@@ -376,13 +389,20 @@ public class Combat : MonoBehaviour
         // Input attack
         //
         if (_uiMode == UiMode.Attack) {
-            // if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free) {
-            //     var robot = _robots[_selected_robot_index];
-            //     robot.actor.x = hovered_x;
-            //     robot.actor.y = hovered_y;
-            //     _robots[_selected_robot_index] = robot;
-            //     _uiMode = UiMode.Select;
-            // }
+            if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && attack_group_id != 0) {
+                var robot = _robots[_selected_robot_index];
+                
+                for (int tile_index = 0, y = 0; y < _board_size; y++) {
+                    for (int x = 0; x < _board_size; x++, tile_index++) {
+                        var attackable_table = _attackable[_selected_robot_index];
+                        if (attackable_table[tile_index] == attack_group_id) {
+                            dammage_tile(tile_index, 1);
+                        }
+                    }
+                }
+
+                _uiMode = UiMode.Select;
+            }
         }
 
         //
@@ -393,10 +413,36 @@ public class Combat : MonoBehaviour
             var view = robot.view;
 
             view.transform.position = GetTilePos(robot.actor.x, robot.actor.y);
+            view.RefreshHealth(robot.actor.max_hp, robot.actor.current_hp);
         }
     }
 
-    bool IsTileFree(int index)
+    void dammage_tile(int tile_index, int dammage)
+    {
+        for(int i = 0; i < _rocks.Count; i++) {
+            var rock = _rocks[i];
+            if (CoordsToIndex(rock.actor.x, rock.actor.y) == tile_index) {
+                rock.actor.current_hp--;
+                if (rock.actor.current_hp <= 0) {
+                    Debug.Log("A rock was KILLED!!!");
+                }
+                _rocks[i] = rock;
+            }
+        }
+        for(int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            if (CoordsToIndex(robot.actor.x, robot.actor.y) == tile_index) {
+                robot.actor.current_hp--;
+                if (robot.actor.current_hp <= 0) {
+                    Debug.Log("A robot was KILLED!!!");
+                }
+                robot.view.DammageEffect(dammage);
+                _robots[i] = robot;
+            }
+        }
+    }
+
+    bool IsTileFree(int index, bool allow_water = false)
     {
         if (index == -1) {
             return false;
@@ -405,14 +451,21 @@ public class Combat : MonoBehaviour
             return false;
         }
         char tile_type = _level_data[index];
-        if (tile_type == ROCK || tile_type == WATER || tile_type == COLUMN || tile_type == GOAL) {
+
+        if (tile_type == WATER && !allow_water) {
+            return false;
+        }
+
+        if (tile_type == COLUMN || tile_type == GOAL) {
             return false;
         }
 
         for(int i = 0; i < _rocks.Count; i++) {
             var actor = _rocks[i].actor;
             if (CoordsToIndex(actor.x, actor.y) == index) {
-                return false;
+                if (actor.current_hp > 0) {
+                    return false;
+                }
             }
         }
         for(int i = 0; i < _robots.Count; i++) {

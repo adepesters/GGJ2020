@@ -136,7 +136,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &88841394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -289,11 +289,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Combat
       objectReference: {fileID: 0}
-    - target: {fileID: 2479146074802816797, guid: 6a9132bffe9774b2ebf92d036aa2a87b,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6375034690116670444, guid: 6a9132bffe9774b2ebf92d036aa2a87b,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -354,6 +349,38 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 7519560630231532010}
+    - target: {fileID: 1959752835, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a061e70134f3243ff9721452cde55738, type: 2}
+    - target: {fileID: 1959752835, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 2093432479
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959752835, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_SortingLayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959752834, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959752832, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_fontColor.r
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959752832, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_fontColor.g
+      value: 0.81251574
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959752832, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294954752
+      objectReference: {fileID: 0}
+    - target: {fileID: 1959752832, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: a061e70134f3243ff9721452cde55738, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a9132bffe9774b2ebf92d036aa2a87b, type: 3}
 --- !u!1001 &2739935699517174313
@@ -456,6 +483,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Atelier
+      objectReference: {fileID: 0}
+    - target: {fileID: 4512546212485450098, guid: e421af7e33b724c249c134808f6a4caa,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4936181179958533507, guid: e421af7e33b724c249c134808f6a4caa,
         type: 3}

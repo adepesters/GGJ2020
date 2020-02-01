@@ -62,10 +62,6 @@ public class CraftingManager : MonoBehaviour
         chanceAmount.text = crystalsAmount[2].ToString();
         speedAmount.text = crystalsAmount[3].ToString();
 
-        Debug.Log("1: " + robotSlot[0]);
-        Debug.Log("2: " + robotSlot[1]);
-        Debug.Log("3: " + robotSlot[2]);
-
         DebugText.Text(new Vector2(transform.position.x - 100, -95), robotSlot[0].ToString());
         DebugText.Text(new Vector2(transform.position.x, -95), robotSlot[1].ToString());
         DebugText.Text(new Vector2(transform.position.x + 100, -95), robotSlot[2].ToString());
