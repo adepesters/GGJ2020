@@ -29,13 +29,14 @@ public enum UiMode {
 public class Combat : MonoBehaviour
 {
     public Transform _grassTile;
+    public Transform _waterTile;
     public Transform _rock;
     public Transform _selectionFrame;
     public RobotView _robotTemplate;
 
-    const int board_size = 8;
-    const int tile_count = board_size * board_size;
-    public SpriteRenderer[] _selectionFrames = new SpriteRenderer[tile_count];
+    int _board_size;
+    int _tile_count;
+    private SpriteRenderer[] _selectionFrames ;
 
     const float perspective_ratio = 0.31f;
     const float offset_w = 368f/4f;
@@ -58,11 +59,42 @@ public class Combat : MonoBehaviour
 
     public Transform tiles_container;
 
+    const char GRASS = '.';
+    const char ROCK = 'O';
+    const char SPAWN = '+';
+    const char GOAL = '^';
+    const char WATER = '_';
+    const char COLUMN = 'I';
+    const char ENEMY = 'X';
+
+    // const string level_data =
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRR......RRR" + 
+    // "RRRRRSSRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR" + 
+    // "RRRRRRRRRRRR";
+
+    const string _level_data =
+    "OOOOOOOO" + 
+    "O...^..O" +
+    "O.X..X.O" +
+    "___..___" +
+    "O......O" +
+    "O......O" +
+    "O.+..+.O" +
+    "OOOOOOOO";
+
     void Start()
     {
         _robotTemplate.gameObject.SetActive(false);
-        AddRobot(3, 1, 3);
-        AddRobot(1, 3, 2);
+        
         GenerateTerrain();
 
         _move_button.onClick.AddListener(() => {
@@ -84,32 +116,58 @@ public class Combat : MonoBehaviour
         robot.view.gameObject.SetActive(true);
         _robots.Add(robot);
 
-        _reachable.Add(new int[tile_count]);
-        _attackable.Add(new int[tile_count]);
+        _reachable.Add(new int[_tile_count]);
+        _attackable.Add(new int[_tile_count]);
     }
 
     Vector2 GetTilePos(int x, int y)
     {
-        Vector2 origin = new Vector2(-offset_w * (board_size - 1), 0f);
+        Vector2 origin = new Vector2(-offset_w * (_board_size - 1), 0f);
         Vector2 pos = origin + offset_x * x + offset_y * y;
         return pos;
     }
 
     void GenerateTerrain()
     {
+        _board_size = (int) Mathf.Sqrt((float) _level_data.Length);
+        _tile_count = _level_data.Length;
+
+        if (_board_size * _board_size != _tile_count) {
+            Debug.LogError("Damned, a non square level :(");
+            this.enabled = false;
+            return;
+        }
+
+        _selectionFrames = new SpriteRenderer[_tile_count];
+
         _grassTile.gameObject.SetActive(false);
         _rock.gameObject.SetActive(false);
         _selectionFrame.gameObject.SetActive(false);
 
-        Vector2 origin = new Vector2(-offset_w * (board_size - 1), 0f);
-        for (int y = 0; y < board_size; y++) {
-            for (int x = 0; x < board_size; x++) {
+        Vector2 origin = new Vector2(-offset_w * (_board_size - 1), 0f);
+        for (int tile_index = 0, y = 0; y < _board_size; y++) {
+            for (int x = 0; x < _board_size; x++, tile_index++) {
+                // each tile
                 Vector2 pos = GetTilePos(x, y);
-                var tile = Instantiate(_grassTile, tiles_container);
-                tile.transform.localPosition = pos;
-                tile.gameObject.SetActive(true);
+                char tile_char = GRASS; // default tile
+                if (tile_index < _level_data.Length) {
+                    tile_char = _level_data[tile_index];
+                }
+                if (tile_char != WATER) {
+                    var tile = Instantiate(_grassTile, tiles_container);
+                    tile.transform.localPosition = pos;
+                    tile.gameObject.SetActive(true);
+                } else {
+                    var tile = Instantiate(_waterTile, tiles_container);
+                    tile.transform.localPosition = pos;
+                    tile.gameObject.SetActive(true);
+                }
 
-                if (Random.value < 0.2f) {
+                if (tile_char == SPAWN) {
+                    AddRobot(x, y, 2);
+                }
+                
+                if (tile_char == ROCK) {
                     var rockView = Instantiate(_rock, tiles_container);
                     rockView.transform.localPosition = pos;
                     rockView.gameObject.SetActive(true);
@@ -123,7 +181,7 @@ public class Combat : MonoBehaviour
                 selectionFrame.transform.localPosition = pos;
                 selectionFrame.gameObject.SetActive(true);
 
-                _selectionFrames[y * board_size + x] = selectionFrame.GetComponent<SpriteRenderer>();
+                _selectionFrames[y * _board_size + x] = selectionFrame.GetComponent<SpriteRenderer>();
             }
         }
     }
@@ -138,56 +196,73 @@ public class Combat : MonoBehaviour
             //
             // Discover neighbours
             //
-            if (tile_index % board_size != 0) {
+            if (tile_index % _board_size != 0) {
                 var left = tile_index - 1;
                 if (IsTileFree(left)) {
                     DiscoverTile(_distances, left, distance);
                 }
             }
 
-            if (tile_index % board_size != board_size - 1) {
+            if (tile_index % _board_size != _board_size - 1) {
                 var right = tile_index + 1;
                 if (IsTileFree(right)) {
                     DiscoverTile(_distances, right, distance);
                 }
             }
 
-            if (tile_index >= board_size) {
-                var bottom = tile_index - board_size;
+            if (tile_index >= _board_size) {
+                var bottom = tile_index - _board_size;
                 if (IsTileFree(bottom)) {
                     DiscoverTile(_distances, bottom, distance);
                 }
             }
 
-            if (tile_index < tile_count - board_size) {
-                var top = tile_index + board_size;
+            if (tile_index < _tile_count - _board_size) {
+                var top = tile_index + _board_size;
                 if (IsTileFree(top)) {
                     DiscoverTile(_distances, top, distance);
                 }
             }
         }
+    }
 
-        
+    bool Tilecast(int[] attackable, int start_x, int start_y, int d_x, int d_y, int group_id, int hovered_index)
+    {
+        bool met_hovered_tile = false;
+        while(true) {
+            start_x += d_x;
+            start_y += d_y;
+            int index = CoordsToIndex(start_x, start_y);
+            if (index == hovered_index && index != -1) {
+                met_hovered_tile = true;
+            }
+            if (index == -1) {
+                break;
+            }
+            attackable[index] = group_id;
+            if (!IsTileFree(index)) {
+                break;
+            }
+        }
+        return met_hovered_tile;
     }
 
     void Update()
     {
-        DebugText.Text(Vector3.zero, _uiMode.ToString());
-
         //
         // Find out which tile the cursor is on
         //
         Vector3 screen_pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         screen_pos.z = 0.0f;
-        Vector3 tiles_origin_pos = new Vector3(-offset_w * (board_size - 1), 0f, 0.0f);
+        Vector3 tiles_origin_pos = new Vector3(-offset_w * (_board_size - 1), 0f, 0.0f);
         Vector3 delta_pos = screen_pos - tiles_origin_pos;
         var div_x = delta_pos / offset_x;
         var div_y = delta_pos / offset_y;
         int hovered_x = Mathf.RoundToInt((div_x.x + div_x.y) * 0.5f);
         int hovered_y = Mathf.RoundToInt((div_y.x + div_y.y) * 0.5f);
         int hovered_tile = -1; // -1 means no tile is hovered
-        if (hovered_x >= 0 && hovered_y >= 0 && hovered_x < board_size && hovered_y < board_size) {
-            hovered_tile = hovered_y * board_size + hovered_x;
+        if (hovered_x >= 0 && hovered_y >= 0 && hovered_x < _board_size && hovered_y < _board_size) {
+            hovered_tile = hovered_y * _board_size + hovered_x;
         }
 
         bool hovered_tile_is_free = IsTileFree(hovered_tile);
@@ -210,29 +285,35 @@ public class Combat : MonoBehaviour
         //
         // Update attackable tiles
         //
+        int attack_group_id = -1;
         for (int robot_index = 0; robot_index < _robots.Count; robot_index++) {
             var attackable_table = _attackable[robot_index];
             var robot = _robots[robot_index];
 
-            for (int tile_index = 0, y = 0; y < board_size; y++) {
-                for (int x = 0; x < board_size; x++, tile_index++) {
-                    attackable_table[tile_index] = (x == robot.actor.x || y == robot.actor.y) ? 1 : 0; 
-                }
+            // clear attackable table
+            for (int j = 0; j < attackable_table.Length; j++) {
+                attackable_table[j] = 0;
             }
+
+            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, 1, 0, group_id: 1, hovered_tile)) attack_group_id = 1;
+            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, -1, 0, group_id: 2, hovered_tile)) attack_group_id = 2;
+            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, 0, 1, group_id: 3, hovered_tile)) attack_group_id = 3;
+            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, 0, -1, group_id: 4, hovered_tile)) attack_group_id = 4;
+            //DebugText.Text(Vector3.zero, attack_group_id.ToString());
         }
 
         //
         // Update tiles highlights
         //
-        for (int tile_index = 0, y = 0; y < board_size; y++) {
-            for (int x = 0; x < board_size; x++, tile_index++) {
+        for (int tile_index = 0, y = 0; y < _board_size; y++) {
+            for (int x = 0; x < _board_size; x++, tile_index++) {
                 var frame = _selectionFrames[tile_index];
                 var tile_in_range = InRange(_robots[_selected_robot_index].actor, x, y, 2);
                 var reachable_table = _reachable[_selected_robot_index];
                 var attackable_table = _attackable[_selected_robot_index];
                 var selected_robot = _robots[_selected_robot_index];
 
-                DebugText.Text(GetTilePos(x,y), reachable_table[tile_index].ToString());
+                //DebugText.Text(GetTilePos(x,y), attackable_table[tile_index].ToString());
 
                 var color = Color.clear;
                 var reachable = reachable_table[tile_index] <= selected_robot.actor.movement_range;
@@ -242,10 +323,14 @@ public class Combat : MonoBehaviour
                 }
                 if (_uiMode == UiMode.Attack && attackable) {
                     color = Color.yellow;
+                    var selected_attack_group = (attack_group_id == attackable_table[tile_index]);
+                    if (selected_attack_group) {
+                        color = Color.red;
+                    }
                 }
-                if (hovered_tile == tile_index) {
+                if (hovered_tile == tile_index && _uiMode != UiMode.Attack) {
                     color = Color.white;
-                    if (!hovered_tile_is_free) {
+                    if (_uiMode == UiMode.Move && !hovered_tile_is_free) {
                         color = Color.red;
                     }
                     if (_uiMode == UiMode.Move && !reachable) {
@@ -313,6 +398,17 @@ public class Combat : MonoBehaviour
 
     bool IsTileFree(int index)
     {
+        if (index == -1) {
+            return false;
+        }
+        if (index >= _level_data.Length) {
+            return false;
+        }
+        char tile_type = _level_data[index];
+        if (tile_type == ROCK || tile_type == WATER || tile_type == COLUMN || tile_type == GOAL) {
+            return false;
+        }
+
         for(int i = 0; i < _rocks.Count; i++) {
             var actor = _rocks[i].actor;
             if (CoordsToIndex(actor.x, actor.y) == index) {
@@ -330,8 +426,8 @@ public class Combat : MonoBehaviour
 
     int CoordsToIndex(int x, int y)
     {
-        if (x >= 0 && y >= 0 && x < board_size && y < board_size) {
-            return y * board_size + x;
+        if (x >= 0 && y >= 0 && x < _board_size && y < _board_size) {
+            return y * _board_size + x;
         } else {
             return -1; // outside game board
         }
