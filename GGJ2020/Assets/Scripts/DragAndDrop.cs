@@ -26,6 +26,7 @@ public class DragAndDrop : MonoBehaviour
     [SerializeField] GameObject panel3;
 
     int robotIndex;
+    bool returnToBase;
 
     // Start is called before the first frame update
     void Start()
@@ -47,18 +48,21 @@ public class DragAndDrop : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (newRobotIcon != null)
+        if (!returnToBase)
         {
-            //Debug.Log("entered");
-            newRobotIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(
-            Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
-                Camera.main.ScreenToWorldPoint(Input.mousePosition).y,
-            0);
+            if (newRobotIcon != null)
+            {
+                //Debug.Log("entered");
+                newRobotIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(
+                Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
+                    Camera.main.ScreenToWorldPoint(Input.mousePosition).y,
+                0);
 
-            newRobotIcon.GetComponent<RectTransform>().localPosition = new Vector3(
-            newRobotIcon.GetComponent<RectTransform>().localPosition.x,
-                newRobotIcon.GetComponent<RectTransform>().localPosition.y,
-            0);
+                newRobotIcon.GetComponent<RectTransform>().localPosition = new Vector3(
+                newRobotIcon.GetComponent<RectTransform>().localPosition.x,
+                    newRobotIcon.GetComponent<RectTransform>().localPosition.y,
+                0);
+            }
         }
 
         int tmp = 0;
@@ -70,8 +74,6 @@ public class DragAndDrop : MonoBehaviour
             }
         }
 
-        DebugText.Text(transform.position, tmp.ToString());
-        //Debug.Log(tmp);
         if (robotIndex == 1)
         {
             //  Debug.Log(tmp);
@@ -97,6 +99,14 @@ public class DragAndDrop : MonoBehaviour
         {
             GetComponent<Image>().color = Color.black;
         }
+
+        if (returnToBase)
+        {
+            if (newRobotIcon != null)
+            {
+                ReturnToBase();
+            }
+        }
     }
 
     private void OnMouseEnter()
@@ -118,16 +128,19 @@ public class DragAndDrop : MonoBehaviour
 
     public void OnMouseDown()
     {
-        newRobotIcon = Instantiate(robotIcon, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-        //newRobotIcon.transform.parent = gameObject.transform.parent;
-        newRobotIcon.transform.SetParent(transform.parent, true);
-        newRobotIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
-        newRobotIcon.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
-        newRobotIcon.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
-        newRobotIcon.GetComponent<Image>().sprite = robotSprite;
+        if (!isUsed && craftingManager.HasBeenDiscovered[robotIndex - 1])
+        {
+            newRobotIcon = Instantiate(robotIcon, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
+            //newRobotIcon.transform.parent = gameObject.transform.parent;
+            newRobotIcon.transform.SetParent(transform.parent, true);
+            newRobotIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(100, 100);
+            newRobotIcon.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
+            newRobotIcon.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+            newRobotIcon.GetComponent<Image>().sprite = robotSprite;
 
-        //newRobotIcon.GetComponent<RectTransform>().rect = new Rect()
-        isDragged = true;
+            //newRobotIcon.GetComponent<RectTransform>().rect = new Rect()
+            isDragged = true;
+        }
     }
 
     public void OnMouseUp()
@@ -139,22 +152,80 @@ public class DragAndDrop : MonoBehaviour
             panel1.GetComponent<Image>().color = Color.white;
             craftingManager.RobotSlot[0] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
             //Debug.Log(int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", "")));
+
+            if (craftingManager.RobotSlot[0] != 0)
+            {
+                craftingManager.CrystalsAmount[0] += craftingManager.Energy[0];
+                craftingManager.CrystalsAmount[1] += craftingManager.Action[0];
+                craftingManager.CrystalsAmount[2] += craftingManager.Chance[0];
+                craftingManager.CrystalsAmount[3] += craftingManager.Speed[0];
+
+                craftingManager.Energy[0] = 0;
+                craftingManager.Action[0] = 0;
+                craftingManager.Chance[0] = 0;
+                craftingManager.Speed[0] = 0;
+            }
         }
 
-        if (robotSelectionManager.TouchingPanel2)
+        else if (robotSelectionManager.TouchingPanel2)
         {
             Destroy(newRobotIcon.gameObject);
             panel2.GetComponent<Image>().sprite = robotSprite;
             panel2.GetComponent<Image>().color = Color.white;
             craftingManager.RobotSlot[1] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+
+            if (craftingManager.RobotSlot[1] != 0)
+            {
+                craftingManager.CrystalsAmount[0] += craftingManager.Energy[1];
+                craftingManager.CrystalsAmount[1] += craftingManager.Action[1];
+                craftingManager.CrystalsAmount[2] += craftingManager.Chance[1];
+                craftingManager.CrystalsAmount[3] += craftingManager.Speed[1];
+
+                craftingManager.Energy[1] = 0;
+                craftingManager.Action[1] = 0;
+                craftingManager.Chance[1] = 0;
+                craftingManager.Speed[1] = 0;
+            }
         }
 
-        if (robotSelectionManager.TouchingPanel3)
+        else if (robotSelectionManager.TouchingPanel3)
         {
             Destroy(newRobotIcon.gameObject);
             panel3.GetComponent<Image>().sprite = robotSprite;
             panel3.GetComponent<Image>().color = Color.white;
             craftingManager.RobotSlot[2] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+
+            if (craftingManager.RobotSlot[2] != 0)
+            {
+                craftingManager.CrystalsAmount[0] += craftingManager.Energy[2];
+                craftingManager.CrystalsAmount[1] += craftingManager.Action[2];
+                craftingManager.CrystalsAmount[2] += craftingManager.Chance[2];
+                craftingManager.CrystalsAmount[3] += craftingManager.Speed[2];
+
+                craftingManager.Energy[2] = 0;
+                craftingManager.Action[2] = 0;
+                craftingManager.Chance[2] = 0;
+                craftingManager.Speed[2] = 0;
+            }
+        }
+
+        else
+        {
+            returnToBase = true;
+        }
+    }
+
+    void ReturnToBase()
+    {
+        newRobotIcon.gameObject.GetComponent<RectTransform>().anchoredPosition = Vector2.MoveTowards(
+        newRobotIcon.gameObject.GetComponent<RectTransform>().anchoredPosition,
+        GetComponent<RectTransform>().anchoredPosition, 2000f * Time.deltaTime);
+
+        if (Vector2.Distance(newRobotIcon.gameObject.GetComponent<RectTransform>().anchoredPosition,
+        GetComponent<RectTransform>().anchoredPosition) < 30f)
+        {
+            Destroy(newRobotIcon.gameObject);
+            returnToBase = false;
         }
     }
 

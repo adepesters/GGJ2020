@@ -24,22 +24,8 @@ public class DragAndDropCrystal : MonoBehaviour
     [SerializeField] GameObject panel2;
     [SerializeField] GameObject panel3;
 
-    [SerializeField] GameObject slot1EnergyMask;
-    [SerializeField] GameObject slot1ActionMask;
-    [SerializeField] GameObject slot1ChanceMask;
-    [SerializeField] GameObject slot1SpeedMask;
-
-    [SerializeField] GameObject slot2EnergyMask;
-    [SerializeField] GameObject slot2ActionMask;
-    [SerializeField] GameObject slot2ChanceMask;
-    [SerializeField] GameObject slot2SpeedMask;
-
-    [SerializeField] GameObject slot3EnergyMask;
-    [SerializeField] GameObject slot3ActionMask;
-    [SerializeField] GameObject slot3ChanceMask;
-    [SerializeField] GameObject slot3SpeedMask;
-
     bool returnToBase;
+    int crystalIndex;
 
     // Start is called before the first frame update
     void Start()
@@ -67,7 +53,7 @@ public class DragAndDropCrystal : MonoBehaviour
                 0);
             }
 
-            int crystalIndex = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+            crystalIndex = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
             if (craftingManager.CrystalsAmount[crystalIndex - 1] > 0)
             {
                 GetComponent<Image>().color = Color.white;
@@ -106,22 +92,31 @@ public class DragAndDropCrystal : MonoBehaviour
 
     public void OnMouseDown()
     {
-        newCrystalIcon = Instantiate(crystalIcon, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
-        //newRobotIcon.transform.parent = gameObject.transform.parent;
-        newCrystalIcon.transform.SetParent(transform.parent, true);
-        newCrystalIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(30, 30);
-        newCrystalIcon.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
-        newCrystalIcon.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
-        newCrystalIcon.GetComponent<Image>().sprite = crystalSprite;
+        if (craftingManager.CrystalsAmount[crystalIndex - 1] != 0)
+        {
+            newCrystalIcon = Instantiate(crystalIcon, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
+            //newRobotIcon.transform.parent = gameObject.transform.parent;
+            newCrystalIcon.transform.SetParent(transform.parent, true);
+            newCrystalIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(30, 30);
+            newCrystalIcon.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
+            newCrystalIcon.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
+            newCrystalIcon.GetComponent<Image>().sprite = crystalSprite;
 
-        //newRobotIcon.GetComponent<RectTransform>().rect = new Rect()
-        isDragged = true;
+            //newRobotIcon.GetComponent<RectTransform>().rect = new Rect()
+            isDragged = true;
+        }
     }
 
     public void OnMouseUp()
     {
-        if (robotSelectionManager.TouchingPanel1Crystal)
+        int maxCrystals = 10;
+        if (robotSelectionManager.TouchingPanel1Crystal && craftingManager.RobotSlot[0] != 0 &&
+        ((craftingManager.Energy[0] < maxCrystals && crystalIndex == 1) ||
+            (craftingManager.Action[0] < maxCrystals && crystalIndex == 2) ||
+            (craftingManager.Chance[0] < maxCrystals && crystalIndex == 3) ||
+            (craftingManager.Speed[0] < maxCrystals && crystalIndex == 4)))
         {
+
             Destroy(newCrystalIcon.gameObject);
             //panel1.GetComponent<Image>().sprite = crystalSprite;
             //panel1.GetComponent<Image>().color = Color.white;
@@ -129,7 +124,11 @@ public class DragAndDropCrystal : MonoBehaviour
             UpdateCrystals(0);
         }
 
-        else if (robotSelectionManager.TouchingPanel2Crystal)
+        else if (robotSelectionManager.TouchingPanel2Crystal && craftingManager.RobotSlot[1] != 0 &&
+        ((craftingManager.Energy[1] < maxCrystals && crystalIndex == 1) ||
+            (craftingManager.Action[1] < maxCrystals && crystalIndex == 2) ||
+            (craftingManager.Chance[1] < maxCrystals && crystalIndex == 3) ||
+            (craftingManager.Speed[1] < maxCrystals && crystalIndex == 4)))
         {
             Destroy(newCrystalIcon.gameObject);
             //panel2.GetComponent<Image>().sprite = crystalSprite;
@@ -138,7 +137,11 @@ public class DragAndDropCrystal : MonoBehaviour
             UpdateCrystals(1);
         }
 
-        else if (robotSelectionManager.TouchingPanel3Crystal)
+        else if (robotSelectionManager.TouchingPanel3Crystal && craftingManager.RobotSlot[2] != 0 &&
+        ((craftingManager.Energy[2] < maxCrystals && crystalIndex == 1) ||
+            (craftingManager.Action[2] < maxCrystals && crystalIndex == 2) ||
+            (craftingManager.Chance[2] < maxCrystals && crystalIndex == 3) ||
+            (craftingManager.Speed[2] < maxCrystals && crystalIndex == 4)))
         {
             Destroy(newCrystalIcon.gameObject);
             //panel3.GetComponent<Image>().sprite = crystalSprite;
@@ -163,18 +166,6 @@ public class DragAndDropCrystal : MonoBehaviour
                 {
                     craftingManager.CrystalsAmount[0]--;
                     craftingManager.Energy[_robotSlot] += 1;
-                    if (_robotSlot == 0)
-                    {
-                        slot1EnergyMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 1)
-                    {
-                        slot2EnergyMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 2)
-                    {
-                        slot3EnergyMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
                 }
                 break;
 
@@ -183,18 +174,6 @@ public class DragAndDropCrystal : MonoBehaviour
                 {
                     craftingManager.CrystalsAmount[1]--;
                     craftingManager.Action[_robotSlot] += 1;
-                    if (_robotSlot == 0)
-                    {
-                        slot1ActionMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 1)
-                    {
-                        slot2ActionMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 2)
-                    {
-                        slot3ActionMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
                 }
                 break;
 
@@ -203,18 +182,6 @@ public class DragAndDropCrystal : MonoBehaviour
                 {
                     craftingManager.CrystalsAmount[2]--;
                     craftingManager.Chance[_robotSlot] += 1;
-                    if (_robotSlot == 0)
-                    {
-                        slot1ChanceMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 1)
-                    {
-                        slot2ChanceMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 2)
-                    {
-                        slot3ChanceMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
                 }
                 break;
 
@@ -223,18 +190,6 @@ public class DragAndDropCrystal : MonoBehaviour
                 {
                     craftingManager.CrystalsAmount[3]--;
                     craftingManager.Speed[_robotSlot] += 1;
-                    if (_robotSlot == 0)
-                    {
-                        slot1SpeedMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 1)
-                    {
-                        slot2SpeedMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
-                    else if (_robotSlot == 2)
-                    {
-                        slot3SpeedMask.GetComponent<Image>().fillAmount -= 0.1f;
-                    }
                 }
                 break;
         }

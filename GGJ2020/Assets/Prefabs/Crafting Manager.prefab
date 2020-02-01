@@ -47,3 +47,15 @@ MonoBehaviour:
   actionAmount: {fileID: 0}
   chanceAmount: {fileID: 0}
   speedAmount: {fileID: 0}
+  slot1EnergyMask: {fileID: 0}
+  slot1ActionMask: {fileID: 0}
+  slot1ChanceMask: {fileID: 0}
+  slot1SpeedMask: {fileID: 0}
+  slot2EnergyMask: {fileID: 0}
+  slot2ActionMask: {fileID: 0}
+  slot2ChanceMask: {fileID: 0}
+  slot2SpeedMask: {fileID: 0}
+  slot3EnergyMask: {fileID: 0}
+  slot3ActionMask: {fileID: 0}
+  slot3ChanceMask: {fileID: 0}
+  slot3SpeedMask: {fileID: 0}

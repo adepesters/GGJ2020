@@ -38,7 +38,7 @@ public class DragToPanel2 : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.gameObject.name.Contains("Icon Canvas"))
+        if (collision.gameObject.name.Contains("Icon Panel"))
         {
             robotSelectionManager.TouchingPanel2 = false;
         }
