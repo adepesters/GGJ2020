@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +6,7 @@ using System.Linq;
 
 public struct Plan
 {
+    public bool is_valid;
     public int move_to_tile;
     public int attack_group;
 }
@@ -108,6 +109,7 @@ public class Combat : MonoBehaviour
 
     string[] _levels = new string[]
     {
+        // Jo
         "I......^" +
         ".X...__." +
         "..O..__." +
@@ -116,6 +118,16 @@ public class Combat : MonoBehaviour
         ".__..O.." +
         ".__...X." +
         "...+...I",
+
+        // Swan
+        ".+.+.+.O" +
+        "X......X" +
+        ".X.__.X." +
+        "..X..X.." +
+        "O..XX..O" +
+        "..X__X.." +
+        ".X.__.X." +
+        "X.O.^O.X",
 
         "+......+" +
         ".O....O." +
@@ -240,15 +252,53 @@ public class Combat : MonoBehaviour
 
         _end_turn_button.onClick.AddListener(() =>
         {
-            EnemiesPlan();
+            NextTurn();
         });
     }
 
     public void NextTurn()
     {
         //EnemiesExecute();
-        EnemiesPlan();
+        StartCoroutine(NextTurnRoutine());
     }
+
+    IEnumerator NextTurnRoutine()
+    {
+        EnemiesPlan();
+        yield return EnemiesExecutePlannedMove();
+    }
+
+    IEnumerator EnemiesExecutePlannedMove()
+    {
+        for (int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            if (robot.friend || !robot.plan.is_valid) {
+                continue;
+            }
+
+            var dest_x = robot.plan.move_to_tile % _board_size;
+            var dest_y = robot.plan.move_to_tile / _board_size;
+            robot = Move(robot, dest_x, dest_y);
+            robot.plan.is_valid = false;
+            _robots[i] = robot;
+
+            //yield return new WaitForSeconds(0.6f);
+        }
+        yield return null;
+    }
+
+    Actor Move(Actor actor, int target_x, int target_y)
+    {
+        actor.x = target_x;
+        actor.y = target_y;
+        var partivjnc = actor.view.GetComponentInChildren<ParticleSystem>();
+        if (partivjnc) {
+            partivjnc.Emit(4);
+        }
+
+        return actor;
+    }
+
 
     void EnemiesPlan()
     {
@@ -282,10 +332,10 @@ public class Combat : MonoBehaviour
                     //     temp_attackable[j] = 0;
                     // }
 
-                    Tilecast(temp_attackable, robot.x, robot.y, 1, 0, group_id: 1, -1);
-                    Tilecast(temp_attackable, robot.x, robot.y, -1, 0, group_id: 2, -1);
-                    Tilecast(temp_attackable, robot.x, robot.y, 0, 1, group_id: 3, -1);
-                    Tilecast(temp_attackable, robot.x, robot.y, 0, -1, group_id: 4, -1);
+                    Tilecast(temp_attackable, x, y, 1, 0, group_id: 1, -1);
+                    Tilecast(temp_attackable, x, y, -1, 0, group_id: 2, -1);
+                    Tilecast(temp_attackable, x, y, 0, 1, group_id: 3, -1);
+                    Tilecast(temp_attackable, x, y, 0, -1, group_id: 4, -1);
 
                     int[] score_for_attack_group = new int[5];
 
@@ -332,6 +382,7 @@ public class Combat : MonoBehaviour
 
                     if (best_score > 0)
                     {
+                        robot.plan.is_valid = true;
                         robot.plan.move_to_tile = tile_index;
                         robot.plan.attack_group = best_group;
                         _robots[i] = robot;
@@ -585,8 +636,13 @@ public class Combat : MonoBehaviour
             // we're dealing with an enemy
             var pos = (Vector3)GetTilePos(robot.x, robot.y);
             pos.z = 10f;
-            DebugText.Text(robot.view.transform.position, $"moving to: {robot.plan.move_to_tile}, group: {robot.plan.attack_group}");
-            Debug.Log($"moving to: {robot.plan.move_to_tile}, group: {robot.plan.attack_group}");
+            if (robot.plan.is_valid) {
+                var target_x = robot.plan.move_to_tile % _board_size;
+                var target_y = robot.plan.move_to_tile / _board_size;
+                DebugText.Text(robot.view.transform.position, $"{robot.x};{robot.y} move to: ({target_x};{target_y}), group: {robot.plan.attack_group}");
+            } else {
+                DebugText.Text(robot.view.transform.position, $"No plan");
+            }
         }
 
         //
@@ -714,15 +770,9 @@ public class Combat : MonoBehaviour
             if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free)
             {
                 var robot = _robots[_selected_robot_index];
-                robot.x = hovered_x;
-                robot.y = hovered_y;
+                robot = Move(robot, hovered_x, hovered_y);
                 _robots[_selected_robot_index] = robot;
                 _uiMode = UiMode.Select;
-                var partivjnc = robot.view.GetComponentInChildren<ParticleSystem>();
-                if (partivjnc)
-                {
-                    partivjnc.Emit(4);
-                }
             }
         }
 
