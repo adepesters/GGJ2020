@@ -316,6 +316,35 @@ public class Combat : MonoBehaviour
             // int best_move_tile = -1;
             // int best_move_group = 0;
 
+            var candidates = new List<int>();
+
+            for (int tile_index = 0; tile_index < _tile_count; tile_index++)
+            {
+                var reachable = reachable_table[tile_index] <= robot.movement_range;
+                if (reachable)
+                {
+                    candidates.Add(tile_index);
+
+                    // we can potentially get there, let's rate this move
+                    // var x = tile_index % _board_size;
+                    // var y = tile_index / _board_size;
+                }
+            }
+
+            for (int iter = 0; iter < 5; iter++) {
+                var dest = candidates[iter];
+
+                var x = dest % _board_size;
+                var y = dest / _board_size;
+
+                var temp_attackable = new int[_tile_count];
+                bool met_friend = false;
+                Tilecast(temp_attackable, x, y, 1, 0, group_id: 1, -1, ref met_friend);
+                Tilecast(temp_attackable, x, y, -1, 0, group_id: 2, -1, ref met_friend);
+                Tilecast(temp_attackable, x, y, 0, 1, group_id: 3, -1, ref met_friend);
+                Tilecast(temp_attackable, x, y, 0, -1, group_id: 4, -1, ref met_friend);
+            }
+
             for (int tile_index = 0; tile_index < _tile_count; tile_index++)
             {
                 var reachable = reachable_table[tile_index] <= robot.movement_range;
@@ -332,10 +361,7 @@ public class Combat : MonoBehaviour
                     //     temp_attackable[j] = 0;
                     // }
 
-                    Tilecast(temp_attackable, x, y, 1, 0, group_id: 1, -1);
-                    Tilecast(temp_attackable, x, y, -1, 0, group_id: 2, -1);
-                    Tilecast(temp_attackable, x, y, 0, 1, group_id: 3, -1);
-                    Tilecast(temp_attackable, x, y, 0, -1, group_id: 4, -1);
+                    
 
                     int[] score_for_attack_group = new int[5];
 
@@ -579,7 +605,7 @@ public class Combat : MonoBehaviour
         }
     }
 
-    bool Tilecast(int[] attackable, int start_x, int start_y, int d_x, int d_y, int group_id, int hovered_index)
+    bool Tilecast(int[] attackable, int start_x, int start_y, int d_x, int d_y, int group_id, int hovered_index, ref bool met_friend)
     {
         bool met_hovered_tile = false;
         while (true)
@@ -595,6 +621,11 @@ public class Combat : MonoBehaviour
             {
                 break;
             }
+
+            foreach(var r in _robots) {
+                if  (r.friend) met_friend = true;
+            }
+
             attackable[index] = group_id;
             if (!IsTileFree(index, allow_water: true))
             {
@@ -681,10 +712,11 @@ public class Combat : MonoBehaviour
             var selected = _selected_robot_index == robot_index;
             if (selected)
             {
-                if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile)) attack_group_id = 1;
-                if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile)) attack_group_id = 2;
-                if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile)) attack_group_id = 3;
-                if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile)) attack_group_id = 4;
+                bool dummy = false;
+                if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile, ref dummy)) attack_group_id = 1;
+                if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile, ref dummy)) attack_group_id = 2;
+                if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile, ref dummy)) attack_group_id = 3;
+                if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile, ref dummy)) attack_group_id = 4;
             }
             //DebugText.Text(Vector3.zero, attack_group_id.ToString());
         }
