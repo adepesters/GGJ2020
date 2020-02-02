@@ -10,6 +10,7 @@ TagManager:
   - CraftingManager
   - DialogManager
   - GameSession
+  - MapManager
   layers:
   - Default
   - TransparentFX

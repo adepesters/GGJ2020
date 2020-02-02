@@ -10,6 +10,7 @@ public class LevelSelector : MonoBehaviour
     int levelID;
     [SerializeField] GameObject colorOverlay;
     Color originalColor;
+    [SerializeField] int[] nextAvailableLevels;
 
     // Start is called before the first frame update
     void Start()
@@ -17,26 +18,43 @@ public class LevelSelector : MonoBehaviour
         gameSession = GameObject.FindWithTag("GameSession").GetComponent<GameSession>();
         levelID = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
         originalColor = colorOverlay.GetComponent<Image>().color;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (gameSession.LevelCanBeReached[levelID])
+        {
+            colorOverlay.GetComponent<Image>().enabled = true;
+        }
+        else
+        {
+            colorOverlay.GetComponent<Image>().enabled = false;
+        }
     }
 
     private void OnMouseDown()
     {
-        gameSession.SelectedLevel = levelID;
+        if (gameSession.LevelCanBeReached[levelID])
+        {
+            gameSession.SelectedLevel = levelID;
+        }
     }
 
     private void OnMouseOver()
     {
-        colorOverlay.GetComponent<Image>().color = new Color(originalColor.r, originalColor.g, originalColor.b, 200);
+        if (gameSession.LevelCanBeReached[levelID])
+        {
+            colorOverlay.GetComponent<Image>().color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.7f);
+        }
     }
 
     private void OnMouseExit()
     {
-        colorOverlay.GetComponent<Image>().color = new Color(originalColor.r, originalColor.g, originalColor.b, 100);
+        if (gameSession.LevelCanBeReached[levelID])
+        {
+            colorOverlay.GetComponent<Image>().color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.3f);
+        }
     }
 }
