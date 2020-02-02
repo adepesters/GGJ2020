@@ -19,6 +19,8 @@ public class NewGameButton : MonoBehaviour
     private float timer = 0f;
     private bool animationRunning = false;
 
+    [SerializeField] AudioClip song;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -38,24 +40,31 @@ public class NewGameButton : MonoBehaviour
     private void OnMouseDown()
     {
         //roomPanel.GetComponent<Image>().sprite = roomLightsOn;
-        StartCoroutine(StartGame());
-    }
-
-    IEnumerator StartGame()
-    {
-        newGamePanel.GetComponent<Text>().fontSize += 20;
-        yield return new WaitForSeconds(0.1f);
-        newGamePanel.GetComponent<Text>().fontSize -= 20;
-        yield return new WaitForSeconds(0.3f);
-
         titlePanel.GetComponent<Text>().enabled = false;
         newGamePanel.GetComponent<Text>().enabled = false;
         gameSession.GameHasStarted = true;
         mapContainer.SetActive(true);
         animationRunning = true;
         GetComponent<AudioSource>().PlayOneShot(neonSound);
+        StartCoroutine(LaunchSong());
+    }
+
+    private void OnMouseOver()
+    {
+        newGamePanel.GetComponent<Text>().fontSize = 134;
     }
 
 
+    private void OnMouseExit()
+    {
+        newGamePanel.GetComponent<Text>().fontSize = 114;
+    }
+
+    IEnumerator LaunchSong()
+    {
+        yield return new WaitForSeconds(1.5f);
+        transform.GetChild(0).GetComponent<AudioSource>().PlayOneShot(song);
+        transform.GetChild(0).GetComponent<AudioSource>().loop = false;
+    }
 
 }

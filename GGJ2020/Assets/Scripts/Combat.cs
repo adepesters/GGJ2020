@@ -52,6 +52,7 @@ public class Combat : MonoBehaviour
     public Transform _selectionFrame;
     public RobotView _robotTemplate;
     public RobotView _enemyTemplate;
+    public AudioClip[] attackSounds;
 
     int _board_size;
     int _tile_count;
@@ -270,9 +271,11 @@ public class Combat : MonoBehaviour
 
     IEnumerator EnemiesExecutePlannedMove()
     {
-        for (int i = 0; i < _robots.Count; i++) {
+        for (int i = 0; i < _robots.Count; i++)
+        {
             var robot = _robots[i];
-            if (robot.friend || !robot.plan.is_valid) {
+            if (robot.friend || !robot.plan.is_valid)
+            {
                 continue;
             }
 
@@ -292,7 +295,8 @@ public class Combat : MonoBehaviour
         actor.x = target_x;
         actor.y = target_y;
         var partivjnc = actor.view.GetComponentInChildren<ParticleSystem>();
-        if (partivjnc) {
+        if (partivjnc)
+        {
             partivjnc.Emit(4);
         }
 
@@ -331,7 +335,8 @@ public class Combat : MonoBehaviour
                 }
             }
 
-            for (int iter = 0; iter < 5; iter++) {
+            for (int iter = 0; iter < 5; iter++)
+            {
                 var dest = candidates[iter];
 
                 var x = dest % _board_size;
@@ -361,7 +366,7 @@ public class Combat : MonoBehaviour
                     //     temp_attackable[j] = 0;
                     // }
 
-                    
+
 
                     int[] score_for_attack_group = new int[5];
 
@@ -622,8 +627,9 @@ public class Combat : MonoBehaviour
                 break;
             }
 
-            foreach(var r in _robots) {
-                if  (r.friend) met_friend = true;
+            foreach (var r in _robots)
+            {
+                if (r.friend) met_friend = true;
             }
 
             attackable[index] = group_id;
@@ -667,11 +673,14 @@ public class Combat : MonoBehaviour
             // we're dealing with an enemy
             var pos = (Vector3)GetTilePos(robot.x, robot.y);
             pos.z = 10f;
-            if (robot.plan.is_valid) {
+            if (robot.plan.is_valid)
+            {
                 var target_x = robot.plan.move_to_tile % _board_size;
                 var target_y = robot.plan.move_to_tile / _board_size;
                 DebugText.Text(robot.view.transform.position, $"{robot.x};{robot.y} move to: ({target_x};{target_y}), group: {robot.plan.attack_group}");
-            } else {
+            }
+            else
+            {
                 DebugText.Text(robot.view.transform.position, $"No plan");
             }
         }
@@ -825,6 +834,7 @@ public class Combat : MonoBehaviour
                         if (attackable_table[tile_index] == attack_group_id)
                         {
                             dammage_tile(tile_index, 1);
+                            GetComponent<AudioSource>().PlayOneShot(attackSounds[Random.Range(0, attackSounds.Length)]);
                         }
                     }
                 }
@@ -900,7 +910,7 @@ public class Combat : MonoBehaviour
             {
                 Debug.Log("Battle won!");
                 _battle_won = true;
-                gameSession.CanLaunchAtelier = true;
+                gameSession.CanLaunchMainRoom = true;
             }
             _goal_actor.view.DammageEffect(dammage);
         }

@@ -46,3 +46,4 @@ MonoBehaviour:
   combat: {fileID: 0}
   atelier: {fileID: 0}
   mainRoom: {fileID: 0}
+  death: {fileID: 0}

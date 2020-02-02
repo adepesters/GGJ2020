@@ -72,7 +72,8 @@ public class CraftingManager : MonoBehaviour
 
 
         // Clear the slots at the begining of the game 
-        for (int i = 0; i < robotSlot.Length; i++) {
+        for (int i = 0; i < robotSlot.Length; i++)
+        {
             robotSlot[i] = -1; // -1 means no robot
         }
     }
@@ -100,8 +101,8 @@ public class CraftingManager : MonoBehaviour
         slot3ChanceMask.GetComponent<Image>().fillAmount = 1f - chance[2] / 10f;
         slot3SpeedMask.GetComponent<Image>().fillAmount = 1f - speed[2] / 10f;
 
-        DebugText.Text(new Vector2(transform.position.x - 100, -95), robotSlot[0].ToString());
-        DebugText.Text(new Vector2(transform.position.x, -95), robotSlot[1].ToString());
-        DebugText.Text(new Vector2(transform.position.x + 100, -95), robotSlot[2].ToString());
+        //DebugText.Text(new Vector2(transform.position.x - 100, -95), robotSlot[0].ToString());
+        //DebugText.Text(new Vector2(transform.position.x, -95), robotSlot[1].ToString());
+        //DebugText.Text(new Vector2(transform.position.x + 100, -95), robotSlot[2].ToString());
     }
 }
