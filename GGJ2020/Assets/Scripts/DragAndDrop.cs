@@ -13,7 +13,9 @@ public class DragAndDrop : MonoBehaviour
 
 {
     [SerializeField] GameObject robotIcon;
-    [SerializeField] Sprite robotSprite;
+    [System.NonSerialized] public Sprite robotSprite; // set by RobotPanels.cs
+    [System.NonSerialized] public int robotIndex; // set by RobotPanels.cs
+
     GameObject newRobotIcon;
     bool isDragged = false;
     bool isUsed;
@@ -25,7 +27,6 @@ public class DragAndDrop : MonoBehaviour
     [SerializeField] GameObject panel2;
     [SerializeField] GameObject panel3;
 
-    int robotIndex;
     bool returnToBase;
 
     // Start is called before the first frame update
@@ -33,9 +34,9 @@ public class DragAndDrop : MonoBehaviour
     {
         robotSelectionManager = GameObject.FindWithTag("RobotSelectionManager").GetComponent<RobotSelectionManager>();
         craftingManager = GameObject.FindWithTag("CraftingManager").GetComponent<CraftingManager>();
-        robotIndex = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+        //robotIndex = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
 
-        if (craftingManager.HasBeenDiscovered[robotIndex - 1])
+        if (craftingManager.HasBeenDiscovered[robotIndex])
         {
             GetComponent<Image>().color = Color.white;
         }
@@ -53,15 +54,15 @@ public class DragAndDrop : MonoBehaviour
             if (newRobotIcon != null)
             {
                 //Debug.Log("entered");
-                newRobotIcon.GetComponent<RectTransform>().anchoredPosition = new Vector3(
+                newRobotIcon.GetComponent<RectTransform>().position = new Vector3(
                 Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
                     Camera.main.ScreenToWorldPoint(Input.mousePosition).y,
                 0);
 
-                newRobotIcon.GetComponent<RectTransform>().localPosition = new Vector3(
-                newRobotIcon.GetComponent<RectTransform>().localPosition.x,
-                    newRobotIcon.GetComponent<RectTransform>().localPosition.y,
-                0);
+                // newRobotIcon.GetComponent<RectTransform>().localPosition = new Vector3(
+                //     newRobotIcon.GetComponent<RectTransform>().localPosition.x,
+                //     newRobotIcon.GetComponent<RectTransform>().localPosition.y,
+                // 0);
             }
         }
 
@@ -74,10 +75,6 @@ public class DragAndDrop : MonoBehaviour
             }
         }
 
-        if (robotIndex == 1)
-        {
-            //  Debug.Log(tmp);
-        }
         if (tmp > 0)
         {
             isUsed = true;
@@ -91,7 +88,7 @@ public class DragAndDrop : MonoBehaviour
         {
             GetComponent<Image>().color = new Color32(100, 100, 100, 100);
         }
-        else if (craftingManager.HasBeenDiscovered[robotIndex - 1])
+        else if (craftingManager.HasBeenDiscovered[robotIndex])
         {
             GetComponent<Image>().color = Color.white;
         }
@@ -128,7 +125,7 @@ public class DragAndDrop : MonoBehaviour
 
     public void OnMouseDown()
     {
-        if (!isUsed && craftingManager.HasBeenDiscovered[robotIndex - 1])
+        if (!isUsed && craftingManager.HasBeenDiscovered[robotIndex])
         {
             newRobotIcon = Instantiate(robotIcon, Camera.main.ScreenToWorldPoint(Input.mousePosition), Quaternion.identity);
             //newRobotIcon.transform.parent = gameObject.transform.parent;
@@ -137,6 +134,7 @@ public class DragAndDrop : MonoBehaviour
             newRobotIcon.GetComponent<RectTransform>().anchorMax = new Vector2(1, 1);
             newRobotIcon.GetComponent<RectTransform>().anchorMin = new Vector2(0, 0);
             newRobotIcon.GetComponent<Image>().sprite = robotSprite;
+            
 
             //newRobotIcon.GetComponent<RectTransform>().rect = new Rect()
             isDragged = true;
@@ -150,10 +148,11 @@ public class DragAndDrop : MonoBehaviour
             Destroy(newRobotIcon.gameObject);
             panel1.GetComponent<Image>().sprite = robotSprite;
             panel1.GetComponent<Image>().color = Color.white;
-            craftingManager.RobotSlot[0] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+            craftingManager.RobotSlot[0] = robotIndex;
             //Debug.Log(int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", "")));
 
-            if (craftingManager.RobotSlot[0] != 0)
+            // Give crystals back
+            if (craftingManager.RobotSlot[0] != -1)
             {
                 craftingManager.CrystalsAmount[0] += craftingManager.Energy[0];
                 craftingManager.CrystalsAmount[1] += craftingManager.Action[0];
@@ -172,9 +171,9 @@ public class DragAndDrop : MonoBehaviour
             Destroy(newRobotIcon.gameObject);
             panel2.GetComponent<Image>().sprite = robotSprite;
             panel2.GetComponent<Image>().color = Color.white;
-            craftingManager.RobotSlot[1] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+            craftingManager.RobotSlot[1] = robotIndex;
 
-            if (craftingManager.RobotSlot[1] != 0)
+            if (craftingManager.RobotSlot[1] != -1)
             {
                 craftingManager.CrystalsAmount[0] += craftingManager.Energy[1];
                 craftingManager.CrystalsAmount[1] += craftingManager.Action[1];
@@ -193,9 +192,9 @@ public class DragAndDrop : MonoBehaviour
             Destroy(newRobotIcon.gameObject);
             panel3.GetComponent<Image>().sprite = robotSprite;
             panel3.GetComponent<Image>().color = Color.white;
-            craftingManager.RobotSlot[2] = int.Parse(Regex.Replace(this.gameObject.name, "[^0-9]", ""));
+            craftingManager.RobotSlot[2] = robotIndex;
 
-            if (craftingManager.RobotSlot[2] != 0)
+            if (craftingManager.RobotSlot[2] != -1)
             {
                 craftingManager.CrystalsAmount[0] += craftingManager.Energy[2];
                 craftingManager.CrystalsAmount[1] += craftingManager.Action[2];

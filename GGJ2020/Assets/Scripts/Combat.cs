@@ -101,7 +101,7 @@ public class Combat : MonoBehaviour
     // "RRRRRRRRRRRR";
 
     const string _level_data =
-    "OOOOOOOO" + 
+    "O______O" + 
     "O...^..O" +
     "O....X.O" +
     "___..___" +
