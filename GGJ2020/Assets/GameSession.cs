@@ -13,10 +13,12 @@ public class GameSession : MonoBehaviour
     bool canLaunchLevel;
     bool canLaunchMainRoom;
     bool canLaunchAtelier;
+    bool canLaunchGameOver;
 
     [SerializeField] GameObject combat;
     [SerializeField] GameObject atelier;
     [SerializeField] GameObject mainRoom;
+    [SerializeField] GameObject death;
 
     public bool GameHasStarted { get => gameHasStarted; set => gameHasStarted = value; }
     public bool IntroDialogOver { get => introDialogOver; set => introDialogOver = value; }
@@ -25,6 +27,7 @@ public class GameSession : MonoBehaviour
     public bool CanLaunchLevel { get => canLaunchLevel; set => canLaunchLevel = value; }
     public bool CanLaunchMainRoom { get => canLaunchMainRoom; set => canLaunchMainRoom = value; }
     public bool CanLaunchAtelier { get => canLaunchAtelier; set => canLaunchAtelier = value; }
+    public bool CanLaunchGameOver { get => canLaunchGameOver; set => canLaunchGameOver = value; }
 
     void Awake()
     {
@@ -36,6 +39,11 @@ public class GameSession : MonoBehaviour
     {
         //selectedLevel = 0;
         levelCanBeReached[0] = true;
+
+        combat.SetActive(false);
+        atelier.SetActive(false);
+        mainRoom.SetActive(true);
+        death.SetActive(false);
     }
 
     // Update is called once per frame
@@ -53,6 +61,7 @@ public class GameSession : MonoBehaviour
             combat.SetActive(true);
             atelier.SetActive(false);
             mainRoom.SetActive(false);
+            death.SetActive(false);
         }
 
         if (canLaunchMainRoom)
@@ -61,6 +70,7 @@ public class GameSession : MonoBehaviour
             combat.SetActive(false);
             atelier.SetActive(false);
             mainRoom.SetActive(true);
+            death.SetActive(false);
         }
 
         if (canLaunchAtelier)
@@ -69,9 +79,26 @@ public class GameSession : MonoBehaviour
             combat.SetActive(false);
             atelier.SetActive(true);
             mainRoom.SetActive(false);
+            death.SetActive(false);
         }
 
+        if (canLaunchGameOver)
+        {
+            StartCoroutine(RelaunchGame());
+        }
 
-        Debug.Log(selectedLevel);
     }
+
+    IEnumerator RelaunchGame()
+    {
+        canLaunchGameOver = false;
+        combat.SetActive(false);
+        atelier.SetActive(false);
+        mainRoom.SetActive(false);
+        death.SetActive(true);
+        levelCanBeReached[0] = true;
+        yield return new WaitForSeconds(4);
+        canLaunchMainRoom = true;
+    }
+
 }
