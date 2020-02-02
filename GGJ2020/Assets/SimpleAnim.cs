@@ -14,6 +14,7 @@ public class SimpleAnim : MonoBehaviour
     void Start()
     {
         _sr = GetComponent<SpriteRenderer>();
+        frame_num += Random.Range(0, _frames.Length);
     }
 
     void Update()
