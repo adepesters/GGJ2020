@@ -39,6 +39,7 @@ public class LevelSelector : MonoBehaviour
         if (gameSession.LevelCanBeReached[levelID])
         {
             gameSession.SelectedLevel = levelID;
+            gameSession.CanLaunchLevel = true;
         }
     }
 

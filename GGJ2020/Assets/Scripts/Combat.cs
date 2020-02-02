@@ -108,6 +108,24 @@ public class Combat : MonoBehaviour
 
     string[] _levels = new string[]
     {
+        "I......^" +
+        ".X...__." +
+        "..O..__." +
+        "...O+..." +
+        "+..XO..." +
+        ".__..O.." +
+        ".__...X." +
+        "...+...I",
+
+        "+......+" +
+        ".O....O." +
+        "..____.." +
+        ".._^._.." +
+        ".._.._.." +
+        ".X_IX_X." +
+        "........" +
+        "OO..+.OO",
+
         "OOOOOOOO" +
         "O...^..O" +
         "O....X.O" +
@@ -115,6 +133,69 @@ public class Combat : MonoBehaviour
         "OI....IO" +
         "O..+...O" +
         "O.+..+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
+        "OOOOOOOO",
+
+        "OOOOOOOO" +
+        "O..X^.XO" +
+        "O....I.O" +
+        "___..___" +
+        "OI....IO" +
+        "O..+.XXO" +
+        "O.+X.+.O" +
         "OOOOOOOO",
 
         "OOOOOOOO" +
