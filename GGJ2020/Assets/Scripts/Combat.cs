@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -88,6 +88,13 @@ public class Combat : MonoBehaviour
     public void ResetGame() {
         _battle_won = false;
         _currentSpawnRobotSlot = 0;
+
+        _robots.Clear();
+        _rocks.Clear();
+
+        for(int i = tiles_container.childCount - 1; i >= 0; i--) {
+            Destroy(tiles_container.GetChild(i).gameObject);
+        }
     }
 
     private Actor _goal_actor;
@@ -274,8 +281,8 @@ public class Combat : MonoBehaviour
 
     IEnumerator NextTurnRoutine()
     {
-        EnemiesPlan();
-        yield return EnemiesExecutePlannedMove();
+        yield return EnemiesPlan();
+        //yield return EnemiesExecutePlannedMove();
     }
 
     IEnumerator EnemiesExecutePlannedMove()
@@ -313,7 +320,7 @@ public class Combat : MonoBehaviour
     }
 
 
-    void EnemiesPlan()
+    IEnumerator EnemiesPlan()
     {
         for (int i = 0; i < _robots.Count; i++)
         {
@@ -364,10 +371,16 @@ public class Combat : MonoBehaviour
                 }
             }
 
-            robot.plan.is_valid = true;
-            robot.plan.move_to_tile = dest_index;
+            // robot.plan.is_valid = true;
+            // robot.plan.move_to_tile = dest_index;
             //robot.plan.attack_group = best_group;
+            var dest_x = dest_index % _board_size;
+            var dest_y = dest_index / _board_size;
+            robot = Move(robot, dest_x, dest_y);
+
             _robots[i] = robot;
+
+            yield return new WaitForSeconds(0.5f);
         }
         
 
@@ -464,6 +477,8 @@ public class Combat : MonoBehaviour
 
     void AddRobot(int x, int y, int movement_range, bool friend = true, int robot_index = -1)
     {
+
+        Debug.Log("ADDING ROBOT");
         Actor actor = new Actor();
         actor.x = x;
         actor.y = y;
@@ -683,6 +698,20 @@ public class Combat : MonoBehaviour
 
     void Update()
     {
+        //
+        // Update win state
+        // 
+        bool at_least_one_friend_alive = false;
+
+        foreach(var r in _robots) {
+            if (r.friend && r.current_hp > 0) {
+                at_least_one_friend_alive = true;
+            }
+        }
+        if (!at_least_one_friend_alive) {
+            gameSession.CanLaunchGameOver = true;
+        }
+
         //
         // Find out which tile the cursor is on
         //
@@ -940,6 +969,13 @@ public class Combat : MonoBehaviour
                 }
                 robot.view.DammageEffect(dammage);
                 _robots[i] = robot;
+
+                robot.view.RefreshHealth(robot.max_hp, robot.current_hp);
+
+                if (!robot.friend) {
+                    robot.view.FadeOut();
+                    _robots.RemoveAt(i);
+                }
             }
         }
 

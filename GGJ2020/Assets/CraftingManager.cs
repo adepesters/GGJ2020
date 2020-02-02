@@ -52,7 +52,7 @@ public class CraftingManager : MonoBehaviour
         }
         else
         {
-            DontDestroyOnLoad(gameObject);
+            //DontDestroyOnLoad(gameObject);
         }
     }
 

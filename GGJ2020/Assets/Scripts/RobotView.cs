@@ -58,6 +58,20 @@ public class RobotView : MonoBehaviour
         }
     }
 
+    public void FadeOut()
+    {
+        StartCoroutine(FadeOutRoutine());
+    }
+
+    IEnumerator FadeOutRoutine()
+    {
+        while(_sprite_renderer.color.a < 0.01f) {
+            _sprite_renderer.color = new Color(1,1,1, Mathf.MoveTowards(_sprite_renderer.color.a, 0f, Time.smoothDeltaTime));
+            yield return null;
+        }
+        Destroy(gameObject);
+    }
+
     public void DammageEffect(int dammage)
     {
         if (dammage > 0) {

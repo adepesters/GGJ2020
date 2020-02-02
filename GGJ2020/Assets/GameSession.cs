@@ -91,6 +91,7 @@ public class GameSession : MonoBehaviour
 
     IEnumerator RelaunchGame()
     {
+        yield return new WaitForSeconds(0.5f);
         canLaunchGameOver = false;
         combat.SetActive(false);
         atelier.SetActive(false);
@@ -98,7 +99,7 @@ public class GameSession : MonoBehaviour
         death.SetActive(true);
         levelCanBeReached[0] = true;
         yield return new WaitForSeconds(4);
-        canLaunchMainRoom = true;
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0, UnityEngine.SceneManagement.LoadSceneMode.Single);
     }
 
 }
