@@ -818,6 +818,7 @@ public class Combat : MonoBehaviour
             {
                 Debug.Log("Battle won!");
                 _battle_won = true;
+                gameSession.CanLaunchAtelier = true;
             }
             _goal_actor.view.DammageEffect(dammage);
         }

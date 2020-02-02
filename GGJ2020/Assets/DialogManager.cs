@@ -29,6 +29,12 @@ public class DialogManager : MonoBehaviour
         line[2] = "Même pas en rêve tronche de cake.";
         line[3] = "T’es trop moche c’est toi la plus nulle.";
         line[4] = "Mais toi t’as été adopté !!!";
+        line[5] = "J'en ai marre, je commence! ";
+        line[6] = "Attends que je prépare mes robots..";
+        line[7] = "j'ai plein de gemmes rouges de puissance..";
+        line[8] = "ça et quelques gemmes bleues de défense...";
+        line[9] = "et puis des vertes et des oranges aussi..";
+        line[10] = "suffit que je les mette sur mon robot et elle aura aucune chance!!!!!";
     }
 
     // Update is called once per frame
@@ -81,6 +87,9 @@ public class DialogManager : MonoBehaviour
         StartCoroutine(ReadLine(line[4], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(341, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
         yield return new WaitForSeconds(3f);
+
+
+
         dialogPanel.GetComponent<Image>().enabled = false;
         dialogLineDisplay.GetComponent<Text>().text = "";
         gameSession.IntroDialogOver = true;

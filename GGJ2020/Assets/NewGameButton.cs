@@ -9,6 +9,7 @@ public class NewGameButton : MonoBehaviour
     [SerializeField] Image roomLightsOff;
     [SerializeField] Image roomLightsOn;
     [SerializeField] GameObject titlePanel;
+    [SerializeField] GameObject newGamePanel;
     [SerializeField] GameObject mapContainer;
     [SerializeField] AudioClip neonSound;
 
@@ -37,12 +38,24 @@ public class NewGameButton : MonoBehaviour
     private void OnMouseDown()
     {
         //roomPanel.GetComponent<Image>().sprite = roomLightsOn;
-        titlePanel.GetComponent<Image>().enabled = false;
+        StartCoroutine(StartGame());
+    }
+
+    IEnumerator StartGame()
+    {
+        newGamePanel.GetComponent<Text>().fontSize += 20;
+        yield return new WaitForSeconds(0.1f);
+        newGamePanel.GetComponent<Text>().fontSize -= 20;
+        yield return new WaitForSeconds(0.3f);
+
+        titlePanel.GetComponent<Text>().enabled = false;
+        newGamePanel.GetComponent<Text>().enabled = false;
         gameSession.GameHasStarted = true;
         mapContainer.SetActive(true);
         animationRunning = true;
         GetComponent<AudioSource>().PlayOneShot(neonSound);
     }
+
 
 
 }

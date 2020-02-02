@@ -110,7 +110,7 @@ public class DragAndDropCrystal : MonoBehaviour
     public void OnMouseUp()
     {
         int maxCrystals = 10;
-        if (robotSelectionManager.TouchingPanel1Crystal && craftingManager.RobotSlot[0] != 0 &&
+        if (robotSelectionManager.TouchingPanel1Crystal && craftingManager.RobotSlot[0] >= 0 &&
         ((craftingManager.Energy[0] < maxCrystals && crystalIndex == 1) ||
             (craftingManager.Action[0] < maxCrystals && crystalIndex == 2) ||
             (craftingManager.Chance[0] < maxCrystals && crystalIndex == 3) ||
@@ -124,7 +124,7 @@ public class DragAndDropCrystal : MonoBehaviour
             UpdateCrystals(0);
         }
 
-        else if (robotSelectionManager.TouchingPanel2Crystal && craftingManager.RobotSlot[1] != 0 &&
+        else if (robotSelectionManager.TouchingPanel2Crystal && craftingManager.RobotSlot[1] >= 0 &&
         ((craftingManager.Energy[1] < maxCrystals && crystalIndex == 1) ||
             (craftingManager.Action[1] < maxCrystals && crystalIndex == 2) ||
             (craftingManager.Chance[1] < maxCrystals && crystalIndex == 3) ||
@@ -137,7 +137,7 @@ public class DragAndDropCrystal : MonoBehaviour
             UpdateCrystals(1);
         }
 
-        else if (robotSelectionManager.TouchingPanel3Crystal && craftingManager.RobotSlot[2] != 0 &&
+        else if (robotSelectionManager.TouchingPanel3Crystal && craftingManager.RobotSlot[2] >= 0 &&
         ((craftingManager.Energy[2] < maxCrystals && crystalIndex == 1) ||
             (craftingManager.Action[2] < maxCrystals && crystalIndex == 2) ||
             (craftingManager.Chance[2] < maxCrystals && crystalIndex == 3) ||
