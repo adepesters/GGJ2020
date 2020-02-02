@@ -341,7 +341,7 @@ public class Combat : MonoBehaviour
             }
 
             int dest_index = -1;
-            for (int iter = 0; iter < 5; iter++) {
+            for (int iter = 0; iter < 8; iter++) {
                 dest_index = candidates[Random.Range(0, candidates.Count)];
 
                 var x = dest_index % _board_size;
