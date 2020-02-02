@@ -2,17 +2,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
+
+public struct Plan {
+    public int move_to_tile;
+    public int attack_group;
+}
 
 public struct Actor {
     public int x;
     public int y;
     public int current_hp;
+    public int max_hp;
     public int movement_range;
+    public RobotView view;
+    public List<int> plop;
+    public bool friend;
+    public Plan plan;
 }
 
 public struct Robot {
     public Actor actor;
-    public RobotView view;
 }
 
 public struct Rock {
@@ -31,8 +41,11 @@ public class Combat : MonoBehaviour
     public Transform _grassTile;
     public Transform _waterTile;
     public Transform _rock;
+    public Transform _column;
+    public Transform _goal;
     public Transform _selectionFrame;
     public RobotView _robotTemplate;
+    public RobotView _enemyTemplate;
 
     int _board_size;
     int _tile_count;
@@ -44,7 +57,7 @@ public class Combat : MonoBehaviour
     Vector2 offset_x = new Vector2(offset_w, -offset_h);
     Vector2 offset_y = new Vector2(offset_w, offset_h);
 
-    public List<Robot> _robots = new List<Robot>();
+    public List<Actor> _robots = new List<Actor>();
     public List<Rock> _rocks = new List<Rock>();
 
     public List<int[]> _reachable = new List<int[]>();
@@ -56,8 +69,14 @@ public class Combat : MonoBehaviour
 
     public Button _move_button;
     public Button _action_button;
+    public Button _end_turn_button;
+
 
     public Transform tiles_container;
+
+    public bool _battle_won = false;
+
+    private Actor _goal_actor;
 
     const char GRASS = '.';
     const char ROCK = 'O';
@@ -84,37 +103,148 @@ public class Combat : MonoBehaviour
     const string _level_data =
     "OOOOOOOO" + 
     "O...^..O" +
-    "O.X..X.O" +
+    "O....X.O" +
     "___..___" +
-    "O......O" +
-    "O......O" +
+    "OI....IO" +
+    "O..+...O" +
     "O.+..+.O" +
     "OOOOOOOO";
 
     void Start()
     {
-        _robotTemplate.gameObject.SetActive(false);
+        _robotTemplate.gameObject.SetActive(false);        
+        _enemyTemplate.gameObject.SetActive(false);        
         
         GenerateTerrain();
 
         _move_button.onClick.AddListener(() => {
-            _uiMode = UiMode.Move;
+            if (_selected_robot_index >= 0 && _robots[_selected_robot_index].current_hp > 0 && !_battle_won) {
+                _uiMode = UiMode.Move;
+            }
         });
 
         _action_button.onClick.AddListener(() => {
-            _uiMode = UiMode.Attack;
+            if (_selected_robot_index >= 0 && _robots[_selected_robot_index].current_hp > 0 && !_battle_won) {
+                _uiMode = UiMode.Attack;
+            }
+        });
+
+        _end_turn_button.onClick.AddListener(() => {
+            EnemiesPlan();
         });
     }
 
-    void AddRobot(int x, int y, int movement_range)
+    public void NextTurn()
     {
-        Robot robot = new Robot();
-        robot.actor.x = x;
-        robot.actor.y = y;
-        robot.actor.movement_range = movement_range;
-        robot.view = Instantiate(_robotTemplate, tiles_container);
-        robot.view.gameObject.SetActive(true);
-        _robots.Add(robot);
+        //EnemiesExecute();
+        EnemiesPlan();
+    }
+
+    void EnemiesPlan()
+    {
+        for (int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            if (robot.friend) {
+                continue;
+            }
+
+            // we're dealing with an enemy
+            var reachable_table = _reachable[i];
+            // int best_move_score = -10000;
+            // int best_move_tile = -1;
+            // int best_move_group = 0;
+
+            for (int tile_index = 0; tile_index < _tile_count; tile_index++) {
+                var reachable = reachable_table[tile_index] <= robot.movement_range;
+                if (reachable) {
+                    // we can potentially get there, let's rate this move
+                    var x = tile_index % _board_size;
+                    var y = tile_index / _board_size;
+
+                    var temp_attackable = new int[_tile_count];
+
+                    // clear attackable table
+                    // for (int j = 0; j < temp_attackable.Length; j++) {
+                    //     temp_attackable[j] = 0;
+                    // }
+
+                    Tilecast(temp_attackable, robot.x, robot.y, 1, 0, group_id: 1, -1);
+                    Tilecast(temp_attackable, robot.x, robot.y, -1, 0, group_id: 2, -1);
+                    Tilecast(temp_attackable, robot.x, robot.y, 0, 1, group_id: 3, -1);
+                    Tilecast(temp_attackable, robot.x, robot.y, 0, -1, group_id: 4, -1);
+                    
+                    int[] score_for_attack_group = new int[5]; 
+
+
+                    for (int j = 0; j < temp_attackable.Length; j++) {
+                        if (temp_attackable[j] != 0) {
+                            var group = temp_attackable[j];
+                            // Could potentially reach here, who did we hit?
+                            for(int k = 0; k < _robots.Count; k++) {
+                                var targetRobot = _robots[k];
+                                if (CoordsToIndex(targetRobot.x, targetRobot.y) == j) {
+                                    if (targetRobot.friend)
+                                        score_for_attack_group[group]++;
+                                    else
+                                        score_for_attack_group[group]--;
+                                }
+                            }
+                        }
+                    }
+                    
+                    var best_group = -1;
+                    var best_score = -1000;
+                    for (int group = 1; group < 5; group++) {
+                        var s = score_for_attack_group[group];
+                        if (s > best_score) {
+                            best_score = s;
+                            best_group = group;
+                        }
+                        // Avoid giving a priority to a particular angle (kindof...)
+                        if (s == best_score) {
+                            if (Random.value < 0.25f) {
+                                best_group = group;
+                            }
+                        }
+                    }
+
+                    if (best_score > 0) {
+                        robot.plan.move_to_tile = tile_index;
+                        robot.plan.attack_group = best_group;
+                        _robots[i] = robot;
+                        break; // move on to the next enemy's plan
+                    }
+                }
+            }
+            
+        }
+    }
+
+    void EnemiesExecute()
+    {
+        for (int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            if (robot.friend) {
+                continue;
+            } else {
+
+            }
+        }
+    }
+
+    void AddRobot(int x, int y, int movement_range, bool friend = true)
+    {
+        Actor actor = new Actor();
+        actor.x = x;
+        actor.y = y;
+        actor.movement_range = movement_range;
+        actor.max_hp = 3;
+        actor.current_hp = 3;
+        actor.friend = friend;
+        var template = friend ? _robotTemplate : _enemyTemplate;
+        actor.view = Instantiate(template, tiles_container);
+        actor.view.gameObject.SetActive(true);
+        _robots.Add(actor);
 
         _reachable.Add(new int[_tile_count]);
         _attackable.Add(new int[_tile_count]);
@@ -141,7 +271,10 @@ public class Combat : MonoBehaviour
         _selectionFrames = new SpriteRenderer[_tile_count];
 
         _grassTile.gameObject.SetActive(false);
+        _waterTile.gameObject.SetActive(false);
         _rock.gameObject.SetActive(false);
+        _column.gameObject.SetActive(false);
+        _goal.gameObject.SetActive(false);
         _selectionFrame.gameObject.SetActive(false);
 
         Vector2 origin = new Vector2(-offset_w * (_board_size - 1), 0f);
@@ -164,7 +297,11 @@ public class Combat : MonoBehaviour
                 }
 
                 if (tile_char == SPAWN) {
-                    AddRobot(x, y, 2);
+                    AddRobot(x, y, 2, friend: true);
+                }
+
+                if (tile_char == ENEMY) {
+                    AddRobot(x, y, 2, friend: false);
                 }
                 
                 if (tile_char == ROCK) {
@@ -176,6 +313,22 @@ public class Combat : MonoBehaviour
                     rock.actor.y = y;
                     rock.view = rockView;
                     _rocks.Add(rock);
+                }
+                if (tile_char == COLUMN) {
+                    var columnView = Instantiate(_column, tiles_container);
+                    columnView.transform.localPosition = pos;
+                    columnView.gameObject.SetActive(true);
+                }
+                if (tile_char == GOAL) {
+                    var goal = Instantiate(_goal, tiles_container);
+                    goal.transform.localPosition = pos;
+                    goal.gameObject.SetActive(true);
+                    _goal_actor = new Actor();
+                    _goal_actor.x = x;
+                    _goal_actor.y = y;
+                    _goal_actor.max_hp = 3;
+                    _goal_actor.current_hp = _goal_actor.max_hp;
+                    _goal_actor.view = goal.GetComponentInChildren<RobotView>();
                 }
                 var selectionFrame = Instantiate(_selectionFrame, tiles_container);
                 selectionFrame.transform.localPosition = pos;
@@ -240,7 +393,7 @@ public class Combat : MonoBehaviour
                 break;
             }
             attackable[index] = group_id;
-            if (!IsTileFree(index)) {
+            if (!IsTileFree(index, allow_water: true)) {
                 break;
             }
         }
@@ -267,11 +420,24 @@ public class Combat : MonoBehaviour
 
         bool hovered_tile_is_free = IsTileFree(hovered_tile);
 
+        for (int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            if (robot.friend) {
+                continue;
+            }
+
+            // we're dealing with an enemy
+            var pos = (Vector3) GetTilePos(robot.x, robot.y);
+            pos.z = 10f;
+            DebugText.Text(robot.view.transform.position, $"moving to: {robot.plan.move_to_tile}, group: {robot.plan.attack_group}");
+            Debug.Log($"moving to: {robot.plan.move_to_tile}, group: {robot.plan.attack_group}");
+        }
+
         //
         // Update reachable tiles for each robot
         //
         for (int i = 0; i < _robots.Count; i++) {
-            var actor = _robots[i].actor;
+            var actor = _robots[i];
             var reachable = _reachable[i];
             
             // clear reachable table
@@ -287,6 +453,7 @@ public class Combat : MonoBehaviour
         //
         int attack_group_id = -1;
         for (int robot_index = 0; robot_index < _robots.Count; robot_index++) {
+            //UpdateAttackableTable(attackableTable, robot_index);
             var attackable_table = _attackable[robot_index];
             var robot = _robots[robot_index];
 
@@ -295,10 +462,13 @@ public class Combat : MonoBehaviour
                 attackable_table[j] = 0;
             }
 
-            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, 1, 0, group_id: 1, hovered_tile)) attack_group_id = 1;
-            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, -1, 0, group_id: 2, hovered_tile)) attack_group_id = 2;
-            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, 0, 1, group_id: 3, hovered_tile)) attack_group_id = 3;
-            if (Tilecast(attackable_table, robot.actor.x, robot.actor.y, 0, -1, group_id: 4, hovered_tile)) attack_group_id = 4;
+            var selected = _selected_robot_index == robot_index;
+            if (selected) {
+                if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile)) attack_group_id = 1;
+                if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile)) attack_group_id = 2;
+                if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile)) attack_group_id = 3;
+                if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile)) attack_group_id = 4;
+            }
             //DebugText.Text(Vector3.zero, attack_group_id.ToString());
         }
 
@@ -308,7 +478,7 @@ public class Combat : MonoBehaviour
         for (int tile_index = 0, y = 0; y < _board_size; y++) {
             for (int x = 0; x < _board_size; x++, tile_index++) {
                 var frame = _selectionFrames[tile_index];
-                var tile_in_range = InRange(_robots[_selected_robot_index].actor, x, y, 2);
+                var tile_in_range = InRange(_robots[_selected_robot_index], x, y, 2);
                 var reachable_table = _reachable[_selected_robot_index];
                 var attackable_table = _attackable[_selected_robot_index];
                 var selected_robot = _robots[_selected_robot_index];
@@ -316,7 +486,7 @@ public class Combat : MonoBehaviour
                 //DebugText.Text(GetTilePos(x,y), attackable_table[tile_index].ToString());
 
                 var color = Color.clear;
-                var reachable = reachable_table[tile_index] <= selected_robot.actor.movement_range;
+                var reachable = reachable_table[tile_index] <= selected_robot.movement_range;
                 var attackable = attackable_table[tile_index] != 0;
                 if (_uiMode == UiMode.Move && reachable) {
                     color = Color.green;
@@ -329,13 +499,16 @@ public class Combat : MonoBehaviour
                     }
                 }
                 if (hovered_tile == tile_index && _uiMode != UiMode.Attack) {
-                    color = Color.white;
+                    color = new Color(1f, 1f, 1f, 0.6f);
                     if (_uiMode == UiMode.Move && !hovered_tile_is_free) {
                         color = Color.red;
                     }
                     if (_uiMode == UiMode.Move && !reachable) {
                         color = Color.red;
                     }
+                }
+                if (x == selected_robot.x && y == selected_robot.y) {
+                    color = Color.white;
                 }
 
                 frame.color = color;
@@ -349,7 +522,7 @@ public class Combat : MonoBehaviour
         if (_uiMode == UiMode.Select) {
             if (hovered_tile >= 0 && Input.GetMouseButtonDown(0)) {
                 for (int i = 0; i < _robots.Count; i++) {
-                    var actor  =_robots[i].actor;
+                    var actor  =_robots[i];
                     int robot_tile = CoordsToIndex(actor.x, actor.y);
                     if (robot_tile == hovered_tile) {
                         _selected_robot_index = i;
@@ -365,10 +538,14 @@ public class Combat : MonoBehaviour
         if (_uiMode == UiMode.Move) {
             if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free) {
                 var robot = _robots[_selected_robot_index];
-                robot.actor.x = hovered_x;
-                robot.actor.y = hovered_y;
+                robot.x = hovered_x;
+                robot.y = hovered_y;
                 _robots[_selected_robot_index] = robot;
                 _uiMode = UiMode.Select;
+                var partivjnc = robot.view.GetComponentInChildren<ParticleSystem>();
+                if (partivjnc) {
+                    partivjnc.Emit(4);
+                }
             }
         }
 
@@ -376,13 +553,20 @@ public class Combat : MonoBehaviour
         // Input attack
         //
         if (_uiMode == UiMode.Attack) {
-            // if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free) {
-            //     var robot = _robots[_selected_robot_index];
-            //     robot.actor.x = hovered_x;
-            //     robot.actor.y = hovered_y;
-            //     _robots[_selected_robot_index] = robot;
-            //     _uiMode = UiMode.Select;
-            // }
+            if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && attack_group_id != 0) {
+                var robot = _robots[_selected_robot_index];
+                
+                for (int tile_index = 0, y = 0; y < _board_size; y++) {
+                    for (int x = 0; x < _board_size; x++, tile_index++) {
+                        var attackable_table = _attackable[_selected_robot_index];
+                        if (attackable_table[tile_index] == attack_group_id) {
+                            dammage_tile(tile_index, 1);
+                        }
+                    }
+                }
+
+                _uiMode = UiMode.Select;
+            }
         }
 
         //
@@ -391,12 +575,66 @@ public class Combat : MonoBehaviour
         for (int i = 0; i < _robots.Count; i++) {
             var robot = _robots[i];
             var view = robot.view;
-
-            view.transform.position = GetTilePos(robot.actor.x, robot.actor.y);
+            
+            var prevPos = view.transform.position;
+            view.transform.position = GetTilePos(robot.x, robot.y);
+            view.RefreshHealth(robot.max_hp, robot.current_hp);
+            // if (move_particles) {
+            //     print("MOVIN THE PARTICLES");
+            //     var newPos = view.transform.position;
+            //     for (int w = 0; w < 10; w++) {
+            //         var ppppos = Vector3.Lerp(prevPos, newPos, (float)w / 10.0f);
+            //         var bloefm = new ParticleSystem.EmitParams();
+            //         bloefm.position = ppppos;
+                    
+            //         robot.view.GetComponentInChildren<ParticleSystem>().Emit(bloefm, 5);
+            //     }
+                
+            //     //robot.view.GetComponentInChildren<ParticleSystem>().Emit(4);
+            // }
         }
+
+        // Update other health counters
+        _goal_actor.view.RefreshHealth(_goal_actor.max_hp, _goal_actor.current_hp);
     }
 
-    bool IsTileFree(int index)
+    void dammage_tile(int tile_index, int dammage)
+    {
+        for(int i = 0; i < _rocks.Count; i++) {
+            var rock = _rocks[i];
+            if (CoordsToIndex(rock.actor.x, rock.actor.y) == tile_index) {
+                rock.actor.current_hp--;
+                if (rock.actor.current_hp <= 0) {
+                    Debug.Log("A rock was KILLED!!!");
+                }
+                _rocks[i] = rock;
+            }
+        }
+        for(int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            if (CoordsToIndex(robot.x, robot.y) == tile_index) {
+                robot.current_hp--;
+                if (robot.current_hp <= 0) {
+                    Debug.Log("A robot was KILLED!!!");
+                }
+                robot.view.DammageEffect(dammage);
+                _robots[i] = robot;
+            }
+        }
+
+        if (CoordsToIndex(_goal_actor.x, _goal_actor.y) == tile_index) {
+            _goal_actor.current_hp--;
+            if (_goal_actor.current_hp <= 0) {
+                Debug.Log("Battle won!");
+                _battle_won = true;
+            }
+            _goal_actor.view.DammageEffect(dammage);
+        }
+
+        
+    }
+
+    bool IsTileFree(int index, bool allow_water = false)
     {
         if (index == -1) {
             return false;
@@ -405,18 +643,25 @@ public class Combat : MonoBehaviour
             return false;
         }
         char tile_type = _level_data[index];
-        if (tile_type == ROCK || tile_type == WATER || tile_type == COLUMN || tile_type == GOAL) {
+
+        if (tile_type == WATER && !allow_water) {
+            return false;
+        }
+
+        if (tile_type == COLUMN || tile_type == GOAL) {
             return false;
         }
 
         for(int i = 0; i < _rocks.Count; i++) {
             var actor = _rocks[i].actor;
             if (CoordsToIndex(actor.x, actor.y) == index) {
-                return false;
+                if (actor.current_hp > 0) {
+                    return false;
+                }
             }
         }
         for(int i = 0; i < _robots.Count; i++) {
-            var actor = _robots[i].actor;
+            var actor = _robots[i];
             if (CoordsToIndex(actor.x, actor.y) == index) {
                 return false;
             }
