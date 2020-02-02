@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -344,9 +344,18 @@ public class Combat : MonoBehaviour
                 }
             }
 
+<<<<<<< HEAD
+            for (int iter = 0; iter < 5; iter++)
+            {
+                var dest = candidates[iter];
+||||||| merged common ancestors
+            for (int iter = 0; iter < 5; iter++) {
+                var dest = candidates[iter];
+=======
             int dest_index = -1;
             for (int iter = 0; iter < 5; iter++) {
                 dest_index = candidates[Random.Range(0, candidates.Count)];
+>>>>>>> e57861ba8bbec3389622fc1576ed8fe18333e509
 
                 var x = dest_index % _board_size;
                 var y = dest_index / _board_size;
@@ -359,10 +368,16 @@ public class Combat : MonoBehaviour
                 Tilecast(temp_attackable, x, y, 0, 1, group_id: 3, -1, ref met_friend);
                 Tilecast(temp_attackable, x, y, 0, -1, group_id: 4, -1, ref met_friend);
 
+<<<<<<< HEAD
+
+||||||| merged common ancestors
+                    
+=======
                 if (met_friend) {
                     break;
                 }
             }
+>>>>>>> e57861ba8bbec3389622fc1576ed8fe18333e509
 
             robot.plan.is_valid = true;
             robot.plan.move_to_tile = dest_index;
@@ -387,7 +402,7 @@ public class Combat : MonoBehaviour
         //             //     temp_attackable[j] = 0;
         //             // }
 
-
+                    
 
         //             int[] score_for_attack_group = new int[5];
 
