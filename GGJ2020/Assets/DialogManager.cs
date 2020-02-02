@@ -19,7 +19,8 @@ public class DialogManager : MonoBehaviour
 
     GameSession gameSession;
 
-    [SerializeField] AudioClip[] voices;
+    [SerializeField] AudioClip[] voicesBoy;
+    [SerializeField] AudioClip[] voicesGirl;
 
     // Start is called before the first frame update
     void Start()
@@ -73,53 +74,62 @@ public class DialogManager : MonoBehaviour
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[0], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
-        //GetComponent<AudioSource>().PlayOneShot();
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogGirlCalm;
         StartCoroutine(ReadLine(line[1], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(341, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
-
+        GetComponent<AudioSource>().PlayOneShot(voicesGirl[Random.Range(0, voicesGirl.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         StartCoroutine(ReadLine(line[2], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         StartCoroutine(ReadLine(line[3], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogGirlAngry;
         StartCoroutine(ReadLine(line[4], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(341, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesGirl[Random.Range(0, voicesGirl.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyAngry;
         dialogCoroutine = StartCoroutine(ReadLine(line[5], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        //GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[6], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[7], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[8], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[9], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[10], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(3f);
         dialogPanel.GetComponent<Image>().sprite = dialogBoyCalm;
         dialogCoroutine = StartCoroutine(ReadLine(line[11], 0.02f));
         dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition = new Vector2(480, dialogLineDisplay.GetComponent<RectTransform>().anchoredPosition.y);
-
+        GetComponent<AudioSource>().PlayOneShot(voicesBoy[Random.Range(0, voicesBoy.Length)]);
         yield return new WaitForSeconds(5f);
 
         dialogPanel.GetComponent<Image>().enabled = false;

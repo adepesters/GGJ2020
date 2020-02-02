@@ -50,7 +50,12 @@ MonoBehaviour:
   dialogBoyAngry: {fileID: 21300000, guid: 95cd3b68bfbbb48c48a24996d46d2af4, type: 3}
   dialogGirlCalm: {fileID: 21300000, guid: c7d7da75e7fd64153a3ceb0c24b0e744, type: 3}
   dialogGirlAngry: {fileID: 21300000, guid: ebcb3eaa8ece14214ab4a44e0a8c7ac3, type: 3}
-  voices: []
+  voicesBoy:
+  - {fileID: 8300000, guid: 7dcc4de519ac64a4db2a8c2e0ec2bb33, type: 3}
+  - {fileID: 8300000, guid: 00f93815d9b86415c98df385a9663fc3, type: 3}
+  voicesGirl:
+  - {fileID: 8300000, guid: d027f8a0eec874b4db56be3a22e2789f, type: 3}
+  - {fileID: 8300000, guid: c0a7c4628fe5b4c3283308b4382f3429, type: 3}
 --- !u!82 &1916325422
 AudioSource:
   m_ObjectHideFlags: 0
