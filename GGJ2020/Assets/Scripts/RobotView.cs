@@ -12,6 +12,7 @@ public class RobotView : MonoBehaviour
     public TextMeshPro _dammage_label_template;
     public SimpleAnim _simpleAnim;
     public SpriteRenderer _shadow;
+    private SpriteRenderer _sprite_renderer;
 
     public void SkinBot(RobotDefinition def)
     {
@@ -26,6 +27,9 @@ public class RobotView : MonoBehaviour
     {
         health_slot_template.gameObject.SetActive(false);
         _dammage_label_template.gameObject.SetActive(false);
+        if (_simpleAnim) {
+            _sprite_renderer = _simpleAnim.GetComponent<SpriteRenderer>();
+        }
     }
 
     public void RefreshHealth(int max_health, int current_health)
@@ -47,11 +51,17 @@ public class RobotView : MonoBehaviour
         for (; i < _health_elements.Count; i++) {
             _health_elements[i].gameObject.SetActive(false);
         }
+        var dead = current_health <= 0;
+        if (_sprite_renderer) {
+            _sprite_renderer.color = dead ? new Color(0.5f,0.5f,0.5f,1f) : new Color(1,1,1,1);
+            _simpleAnim.enabled = !dead;
+        }
     }
 
     public void DammageEffect(int dammage)
     {
         if (dammage > 0) {
+            
             var dammage_label = Instantiate(_dammage_label_template, _dammage_label_template.transform.parent);
             dammage_label.gameObject.SetActive(true);
             dammage_label.text = $"-{dammage}";

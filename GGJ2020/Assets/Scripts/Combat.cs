@@ -966,7 +966,7 @@ public class Combat : MonoBehaviour
             return false;
         }
 
-        if (tile_type == COLUMN || tile_type == GOAL)
+        if (tile_type == COLUMN || tile_type == GOAL || tile_type == ROCK)
         {
             return false;
         }
