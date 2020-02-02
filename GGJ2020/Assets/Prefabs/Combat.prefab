@@ -7045,6 +7045,10 @@ MonoBehaviour:
   _selectionFrame: {fileID: 1905846822934796872}
   _robotTemplate: {fileID: 956582295}
   _enemyTemplate: {fileID: 5705892522162386448}
+  attackSounds:
+  - {fileID: 8300000, guid: f68cc956691f043c1a6af597b37bdcc5, type: 3}
+  - {fileID: 8300000, guid: 9fee2978ee1644c41bf026450326ed0d, type: 3}
+  - {fileID: 8300000, guid: 133715ca6afa447c59fbc310985be241, type: 3}
   _selected_robot_index: 0
   _uiMode: 0
   _move_button: {fileID: 1106938668}
@@ -12904,11 +12908,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 449334876}
     m_Modifications:
-    - target: {fileID: 4397832080063476460, guid: a096889effb11453d84516f7b9a256f0,
-        type: 3}
-      propertyPath: m_Name
-      value: Health View
-      objectReference: {fileID: 0}
     - target: {fileID: 5844450130585044423, guid: a096889effb11453d84516f7b9a256f0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13013,6 +13012,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4397832080063476460, guid: a096889effb11453d84516f7b9a256f0,
+        type: 3}
+      propertyPath: m_Name
+      value: Health View
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a096889effb11453d84516f7b9a256f0, type: 3}

@@ -39,6 +39,11 @@ public class GameSession : MonoBehaviour
     {
         //selectedLevel = 0;
         levelCanBeReached[0] = true;
+
+        combat.SetActive(false);
+        atelier.SetActive(false);
+        mainRoom.SetActive(true);
+        death.SetActive(false);
     }
 
     // Update is called once per frame
