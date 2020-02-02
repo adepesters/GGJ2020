@@ -8,6 +8,8 @@ TagManager:
   - RobotSelectionManager
   - Crafting Manager
   - CraftingManager
+  - DialogManager
+  - GameSession
   layers:
   - Default
   - TransparentFX

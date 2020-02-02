@@ -66,7 +66,6 @@ public class CraftingManager : MonoBehaviour
 
         hasBeenDiscovered[0] = true;
         hasBeenDiscovered[1] = true;
-        hasBeenDiscovered[3] = true;
     }
 
     // Update is called once per frame
