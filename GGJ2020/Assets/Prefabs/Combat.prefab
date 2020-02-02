@@ -439,6 +439,7 @@ GameObject:
   m_Component:
   - component: {fileID: 449334876}
   - component: {fileID: 449334877}
+  - component: {fileID: 166459699}
   m_Layer: 0
   m_Name: Goal
   m_TagString: Untagged
@@ -499,7 +500,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: c5e08600008624833969265c61453606, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 78b6fd089dc1d4e5bb0dae1babf09b04, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -510,6 +511,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 1
+--- !u!114 &166459699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 449334875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da565191a417416fab511ca08c49f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _frames:
+  - {fileID: 21300000, guid: 78b6fd089dc1d4e5bb0dae1babf09b04, type: 3}
+  - {fileID: 21300000, guid: 98a95fe3349fc4e5dbca9b247063102d, type: 3}
+  - {fileID: 21300000, guid: 76797708686f0474c83e46db642698d5, type: 3}
+  - {fileID: 21300000, guid: e9083ea5d61284b768245555fae1d424, type: 3}
+  - {fileID: 21300000, guid: ec3844710b36e4591be8492c5e0233bc, type: 3}
+  - {fileID: 21300000, guid: ef3e610f13701452a8269b9c32e1eb21, type: 3}
+  - {fileID: 21300000, guid: d8a9d3bd3b1a24fecaadb07fff3d5422, type: 3}
+  _frame_duration: 0.4
 --- !u!1 &581846838
 GameObject:
   m_ObjectHideFlags: 0
@@ -760,13 +782,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 624711309}
-    characterCount: 0
+    characterCount: 8
     spriteCount: 0
-    spaceCount: 0
-    wordCount: 0
+    spaceCount: 1
+    wordCount: 2
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -1021,6 +1043,8 @@ MonoBehaviour:
   _empty_color: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
   _friend_color: {r: 0.06274474, g: 0.76731807, b: 0.8867924, a: 1}
   _dammage_label_template: {fileID: 1959752832}
+  _simpleAnim: {fileID: 818499724}
+  _shadow: {fileID: 140472014}
 --- !u!1 &1106938666
 GameObject:
   m_ObjectHideFlags: 0
@@ -6520,13 +6544,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1959752832}
-    characterCount: 0
+    characterCount: 2
     spriteCount: 0
     spaceCount: 0
-    wordCount: 0
+    wordCount: 1
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -6559,7 +6583,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &571847056113725615
 Transform:
   m_ObjectHideFlags: 0
@@ -6879,6 +6903,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4959830443546254974}
   - component: {fileID: 6886014329616148060}
+  - component: {fileID: 6080797234927793042}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -6939,7 +6964,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f2f394a45433a499f9aeaa0190d1c6b8, type: 3}
-  m_Color: {r: 0.990566, g: 0.21960661, b: 0.21960661, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -6949,6 +6974,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &6080797234927793042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2336595408584152527}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4da565191a417416fab511ca08c49f08, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _frames: []
+  _frame_duration: 0.8
 --- !u!1 &2479146074802816797
 GameObject:
   m_ObjectHideFlags: 0
@@ -6965,7 +7004,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6375034690116670444
 Transform:
   m_ObjectHideFlags: 0
@@ -7013,6 +7052,7 @@ MonoBehaviour:
   _end_turn_button: {fileID: 581846840}
   tiles_container: {fileID: 7682848576873505318}
   _battle_won: 0
+  _currentSpawnRobotSlot: 0
 --- !u!1 &2727180554435941188
 GameObject:
   m_ObjectHideFlags: 0
@@ -7292,13 +7332,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 7694275403498727886}
-    characterCount: 0
+    characterCount: 2
     spriteCount: 0
     spaceCount: 0
-    wordCount: 0
+    wordCount: 1
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -7888,13 +7928,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 4293075097068622304}
-    characterCount: 0
+    characterCount: 2
     spriteCount: 0
     spaceCount: 0
-    wordCount: 0
+    wordCount: 1
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -12720,7 +12760,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5439423227851832060
 Transform:
   m_ObjectHideFlags: 0
@@ -12756,6 +12796,8 @@ MonoBehaviour:
   _empty_color: {r: 0.5188679, g: 0.5188679, b: 0.5188679, a: 1}
   _friend_color: {r: 0.8862745, g: 0.08770255, b: 0.06274507, a: 1}
   _dammage_label_template: {fileID: 4293075097068622304}
+  _simpleAnim: {fileID: 6080797234927793042}
+  _shadow: {fileID: 7891329323516541932}
 --- !u!1 &8276066722790969323
 GameObject:
   m_ObjectHideFlags: 0
@@ -12850,9 +12892,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health_slot_template: {fileID: 3218427118788028722}
-  _empty_color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-  _friend_color: {r: 0, g: 0.81251574, b: 1, a: 1}
+  _empty_color: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 1}
+  _friend_color: {r: 0.8396226, g: 0.19911094, b: 0.14653791, a: 1}
   _dammage_label_template: {fileID: 7694275403498727886}
+  _simpleAnim: {fileID: 0}
+  _shadow: {fileID: 0}
 --- !u!1001 &5384906136324692882
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -12860,6 +12904,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 449334876}
     m_Modifications:
+    - target: {fileID: 4397832080063476460, guid: a096889effb11453d84516f7b9a256f0,
+        type: 3}
+      propertyPath: m_Name
+      value: Health View
+      objectReference: {fileID: 0}
     - target: {fileID: 5844450130585044423, guid: a096889effb11453d84516f7b9a256f0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -12964,11 +13013,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4397832080063476460, guid: a096889effb11453d84516f7b9a256f0,
-        type: 3}
-      propertyPath: m_Name
-      value: Health View
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a096889effb11453d84516f7b9a256f0, type: 3}

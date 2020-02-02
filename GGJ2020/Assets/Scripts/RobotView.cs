@@ -10,6 +10,15 @@ public class RobotView : MonoBehaviour
     public Color _empty_color;
     public Color _friend_color;
     public TextMeshPro _dammage_label_template;
+    public SimpleAnim _simpleAnim;
+    public SpriteRenderer _shadow;
+
+    public void SkinBot(RobotDefinition def)
+    {
+       
+        _simpleAnim._frames = def.IdleAnim;
+        _shadow.sprite = def.Shadow;
+    }
 
     private List<SpriteRenderer> _health_elements = new List<SpriteRenderer>();
 

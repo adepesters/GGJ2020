@@ -28,7 +28,7 @@ MonoBehaviour:
     - {fileID: 21300000, guid: 7df505d53a54d43d999841b76e059034, type: 3}
     - {fileID: 21300000, guid: dba6b23c31dd648209d550ad6e05c1e1, type: 3}
     - {fileID: 21300000, guid: 403d398377058438f9dc8d51e9338f17, type: 3}
-    Shadow: {fileID: 21300000, guid: d912635f8b40e48c39aa262b7f5aa237, type: 3}
+    Shadow: {fileID: 21300000, guid: cc92ffc31db544e699b31d6c84963fd6, type: 3}
     Broken: {fileID: 21300000, guid: 4a1bf2128b30040a9a2fd4e5815fb9ea, type: 3}
     StatsMax: 04000000030000000600000003000000
   - IdleAnim:
@@ -40,3 +40,18 @@ MonoBehaviour:
     Shadow: {fileID: 21300000, guid: b30bc273beda9443995a4d4c461cd46e, type: 3}
     Broken: {fileID: 21300000, guid: 4a1bf2128b30040a9a2fd4e5815fb9ea, type: 3}
     StatsMax: 05000000040000000200000005000000
+  Enemies:
+  - IdleAnim:
+    - {fileID: 21300000, guid: c5fad437cf9a24ac88cdef1af752a7a1, type: 3}
+    - {fileID: 21300000, guid: fe233f1bc476f4a13a480e3be949e52e, type: 3}
+    - {fileID: 21300000, guid: e75e9547d37cf457195fe590659634df, type: 3}
+    - {fileID: 21300000, guid: 8de06ad753e534e08a10168e05538e8e, type: 3}
+    - {fileID: 21300000, guid: 265a6cb5bde8d4a86b8f6f361fb27045, type: 3}
+    - {fileID: 21300000, guid: c5fad437cf9a24ac88cdef1af752a7a1, type: 3}
+    - {fileID: 21300000, guid: fe233f1bc476f4a13a480e3be949e52e, type: 3}
+    - {fileID: 21300000, guid: e75e9547d37cf457195fe590659634df, type: 3}
+    - {fileID: 21300000, guid: 8de06ad753e534e08a10168e05538e8e, type: 3}
+    - {fileID: 21300000, guid: 265a6cb5bde8d4a86b8f6f361fb27045, type: 3}
+    Shadow: {fileID: 21300000, guid: ec266cc9e7c9d4964b76ef841dd4e4e6, type: 3}
+    Broken: {fileID: 0}
+    StatsMax: 01000000010000000000000001000000

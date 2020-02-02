@@ -6,7 +6,6 @@ using System.Linq;
 
 public struct Plan
 {
-    public bool is_valid;
     public int move_to_tile;
     public int attack_group;
 }
@@ -18,7 +17,6 @@ public struct Actor
     public int current_hp;
     public int max_hp;
     public int movement_range;
-    public int robot_index;
     public RobotView view;
     public List<int> plop;
     public bool friend;
@@ -82,12 +80,6 @@ public class Combat : MonoBehaviour
     public Transform tiles_container;
 
     public bool _battle_won = false;
-    public int _currentSpawnRobotSlot = 0;
-
-    public void ResetGame() {
-        _battle_won = false;
-        _currentSpawnRobotSlot = 0;
-    }
 
     private Actor _goal_actor;
 
@@ -113,38 +105,23 @@ public class Combat : MonoBehaviour
     // "RRRRRRRRRRRR" + 
     // "RRRRRRRRRRRR";
 
+<<<<<<< HEAD
+    const string _level_data =
+    "O______O" + 
+    "O...^..O" +
+    "O....X.O" +
+    "___..___" +
+    "OI....IO" +
+    "O..+...O" +
+    "O.+..+.O" +
+    "OOOOOOOO";
+
+    void Start()
+=======
 
     string[] _levels = new string[]
+>>>>>>> 2e9364b854ba2a2fe8aad8774ff7fe81601cb73d
     {
-        // Jo
-        "I......^" +
-        ".X...__." +
-        "..O..__." +
-        "...O+..." +
-        "+..XO..." +
-        ".__..O.." +
-        ".__...X." +
-        "...+...I",
-
-        // Swan
-        ".+.+.+.O" +
-        "X......X" +
-        ".X.__.X." +
-        "..X..X.." +
-        "O..XX..O" +
-        "..X__X.." +
-        ".X.__.X." +
-        "X.O.^O.X",
-
-        "+......+" +
-        ".O....O." +
-        "..____.." +
-        ".._^._.." +
-        ".._.._.." +
-        ".X_IX_X." +
-        "........" +
-        "OO..+.OO",
-
         "OOOOOOOO" +
         "O...^..O" +
         "O....X.O" +
@@ -152,69 +129,6 @@ public class Combat : MonoBehaviour
         "OI....IO" +
         "O..+...O" +
         "O.+..+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
-        "OOOOOOOO",
-
-        "OOOOOOOO" +
-        "O..X^.XO" +
-        "O....I.O" +
-        "___..___" +
-        "OI....IO" +
-        "O..+.XXO" +
-        "O.+X.+.O" +
         "OOOOOOOO",
 
         "OOOOOOOO" +
@@ -234,8 +148,6 @@ public class Combat : MonoBehaviour
 
     void OnEnable()
     {
-        ResetGame();
-
         gameSession = GameObject.Find("GameSession").GetComponent<GameSession>();
 
         _robotTemplate.gameObject.SetActive(false);
@@ -261,53 +173,15 @@ public class Combat : MonoBehaviour
 
         _end_turn_button.onClick.AddListener(() =>
         {
-            NextTurn();
+            EnemiesPlan();
         });
     }
 
     public void NextTurn()
     {
         //EnemiesExecute();
-        StartCoroutine(NextTurnRoutine());
-    }
-
-    IEnumerator NextTurnRoutine()
-    {
         EnemiesPlan();
-        yield return EnemiesExecutePlannedMove();
     }
-
-    IEnumerator EnemiesExecutePlannedMove()
-    {
-        for (int i = 0; i < _robots.Count; i++) {
-            var robot = _robots[i];
-            if (robot.friend || !robot.plan.is_valid) {
-                continue;
-            }
-
-            var dest_x = robot.plan.move_to_tile % _board_size;
-            var dest_y = robot.plan.move_to_tile / _board_size;
-            robot = Move(robot, dest_x, dest_y);
-            robot.plan.is_valid = false;
-            _robots[i] = robot;
-
-            //yield return new WaitForSeconds(0.6f);
-        }
-        yield return null;
-    }
-
-    Actor Move(Actor actor, int target_x, int target_y)
-    {
-        actor.x = target_x;
-        actor.y = target_y;
-        var partivjnc = actor.view.GetComponentInChildren<ParticleSystem>();
-        if (partivjnc) {
-            partivjnc.Emit(4);
-        }
-
-        return actor;
-    }
-
 
     void EnemiesPlan()
     {
@@ -325,121 +199,81 @@ public class Combat : MonoBehaviour
             // int best_move_tile = -1;
             // int best_move_group = 0;
 
-            var candidates = new List<int>();
-
             for (int tile_index = 0; tile_index < _tile_count; tile_index++)
             {
                 var reachable = reachable_table[tile_index] <= robot.movement_range;
                 if (reachable)
                 {
-                    candidates.Add(tile_index);
-
                     // we can potentially get there, let's rate this move
-                    // var x = tile_index % _board_size;
-                    // var y = tile_index / _board_size;
+                    var x = tile_index % _board_size;
+                    var y = tile_index / _board_size;
+
+                    var temp_attackable = new int[_tile_count];
+
+                    // clear attackable table
+                    // for (int j = 0; j < temp_attackable.Length; j++) {
+                    //     temp_attackable[j] = 0;
+                    // }
+
+                    Tilecast(temp_attackable, robot.x, robot.y, 1, 0, group_id: 1, -1);
+                    Tilecast(temp_attackable, robot.x, robot.y, -1, 0, group_id: 2, -1);
+                    Tilecast(temp_attackable, robot.x, robot.y, 0, 1, group_id: 3, -1);
+                    Tilecast(temp_attackable, robot.x, robot.y, 0, -1, group_id: 4, -1);
+
+                    int[] score_for_attack_group = new int[5];
+
+
+                    for (int j = 0; j < temp_attackable.Length; j++)
+                    {
+                        if (temp_attackable[j] != 0)
+                        {
+                            var group = temp_attackable[j];
+                            // Could potentially reach here, who did we hit?
+                            for (int k = 0; k < _robots.Count; k++)
+                            {
+                                var targetRobot = _robots[k];
+                                if (CoordsToIndex(targetRobot.x, targetRobot.y) == j)
+                                {
+                                    if (targetRobot.friend)
+                                        score_for_attack_group[group]++;
+                                    else
+                                        score_for_attack_group[group]--;
+                                }
+                            }
+                        }
+                    }
+
+                    var best_group = -1;
+                    var best_score = -1000;
+                    for (int group = 1; group < 5; group++)
+                    {
+                        var s = score_for_attack_group[group];
+                        if (s > best_score)
+                        {
+                            best_score = s;
+                            best_group = group;
+                        }
+                        // Avoid giving a priority to a particular angle (kindof...)
+                        if (s == best_score)
+                        {
+                            if (Random.value < 0.25f)
+                            {
+                                best_group = group;
+                            }
+                        }
+                    }
+
+                    if (best_score > 0)
+                    {
+                        robot.plan.move_to_tile = tile_index;
+                        robot.plan.attack_group = best_group;
+                        _robots[i] = robot;
+                        break; // move on to the next enemy's plan
+                    }
                 }
             }
 
-            int dest_index = -1;
-            for (int iter = 0; iter < 5; iter++) {
-                dest_index = candidates[Random.Range(0, candidates.Count)];
-
-                var x = dest_index % _board_size;
-                var y = dest_index / _board_size;
-
-                var temp_attackable = new int[_tile_count];
-
-                bool met_friend = false;
-                Tilecast(temp_attackable, x, y, 1, 0, group_id: 1, -1, ref met_friend);
-                Tilecast(temp_attackable, x, y, -1, 0, group_id: 2, -1, ref met_friend);
-                Tilecast(temp_attackable, x, y, 0, 1, group_id: 3, -1, ref met_friend);
-                Tilecast(temp_attackable, x, y, 0, -1, group_id: 4, -1, ref met_friend);
-
-                if (met_friend) {
-                    break;
-                }
-            }
-
-            robot.plan.is_valid = true;
-            robot.plan.move_to_tile = dest_index;
-            //robot.plan.attack_group = best_group;
-            _robots[i] = robot;
         }
-        
-
-        //     for (int tile_index = 0; tile_index < _tile_count; tile_index++)
-        //     {
-        //         var reachable = reachable_table[tile_index] <= robot.movement_range;
-        //         if (reachable)
-        //         {
-        //             // we can potentially get there, let's rate this move
-        //             var x = tile_index % _board_size;
-        //             var y = tile_index / _board_size;
-
-        //             var temp_attackable = new int[_tile_count];
-
-        //             // clear attackable table
-        //             // for (int j = 0; j < temp_attackable.Length; j++) {
-        //             //     temp_attackable[j] = 0;
-        //             // }
-
-                    
-
-        //             int[] score_for_attack_group = new int[5];
-
-
-        //             for (int j = 0; j < temp_attackable.Length; j++)
-        //             {
-        //                 if (temp_attackable[j] != 0)
-        //                 {
-        //                     var group = temp_attackable[j];
-        //                     // Could potentially reach here, who did we hit?
-        //                     for (int k = 0; k < _robots.Count; k++)
-        //                     {
-        //                         var targetRobot = _robots[k];
-        //                         if (CoordsToIndex(targetRobot.x, targetRobot.y) == j)
-        //                         {
-        //                             if (targetRobot.friend)
-        //                                 score_for_attack_group[group]++;
-        //                             else
-        //                                 score_for_attack_group[group]--;
-        //                         }
-        //                     }
-        //                 }
-        //             }
-
-        //             var best_group = -1;
-        //             var best_score = -1000;
-        //             for (int group = 1; group < 5; group++)
-        //             {
-        //                 var s = score_for_attack_group[group];
-        //                 if (s > best_score)
-        //                 {
-        //                     best_score = s;
-        //                     best_group = group;
-        //                 }
-        //                 // Avoid giving a priority to a particular angle (kindof...)
-        //                 if (s == best_score)
-        //                 {
-        //                     if (Random.value < 0.25f)
-        //                     {
-        //                         best_group = group;
-        //                     }
-        //                 }
-        //             }
-
-        //             if (best_score > 0)
-        //             {
-        //                 robot.plan.is_valid = true;
-        //                 robot.plan.move_to_tile = tile_index;
-        //                 robot.plan.attack_group = best_group;
-        //                 _robots[i] = robot;
-        //                 break; // move on to the next enemy's plan
-        //             }
-        //         }
-        //     }
-
-        // }
     }
 
     void EnemiesExecute()
@@ -458,7 +292,7 @@ public class Combat : MonoBehaviour
         }
     }
 
-    void AddRobot(int x, int y, int movement_range, bool friend = true, int robot_index = -1)
+    void AddRobot(int x, int y, int movement_range, bool friend = true)
     {
         Actor actor = new Actor();
         actor.x = x;
@@ -467,23 +301,9 @@ public class Combat : MonoBehaviour
         actor.max_hp = 3;
         actor.current_hp = 3;
         actor.friend = friend;
-        actor.robot_index = robot_index;
         var template = friend ? _robotTemplate : _enemyTemplate;
         actor.view = Instantiate(template, tiles_container);
         actor.view.gameObject.SetActive(true);
-        if (robot_index != -1) {
-            var gameData =  Resources.Load<GameData>("GameData");
-            var def = gameData.Definitions[robot_index];
-            actor.view.SkinBot(def);
-            actor.max_hp = def.StatsMax[0];
-            actor.current_hp = def.StatsMax[0];
-        } else {
-            var gameData =  Resources.Load<GameData>("GameData");
-            var def = gameData.Enemies[0];
-            actor.view.SkinBot(def);
-            actor.max_hp = def.StatsMax[0];
-            actor.current_hp = def.StatsMax[0];
-        }
         _robots.Add(actor);
 
         _reachable.Add(new int[_tile_count]);
@@ -546,12 +366,7 @@ public class Combat : MonoBehaviour
 
                 if (tile_char == SPAWN)
                 {
-                    // friend robot
-                    var robot_index = FindObjectOfType<CraftingManager>().RobotSlot[_currentSpawnRobotSlot];
-                    if (robot_index != -1) {
-                        AddRobot(x, y, 2, friend: true, robot_index);
-                        _currentSpawnRobotSlot++;
-                    } 
+                    AddRobot(x, y, 2, friend: true);
                 }
 
                 if (tile_char == ENEMY)
@@ -646,7 +461,7 @@ public class Combat : MonoBehaviour
         }
     }
 
-    bool Tilecast(int[] attackable, int start_x, int start_y, int d_x, int d_y, int group_id, int hovered_index, ref bool met_friend)
+    bool Tilecast(int[] attackable, int start_x, int start_y, int d_x, int d_y, int group_id, int hovered_index)
     {
         bool met_hovered_tile = false;
         while (true)
@@ -662,11 +477,6 @@ public class Combat : MonoBehaviour
             {
                 break;
             }
-
-            foreach(var r in _robots) {
-                if  (r.friend) met_friend = true;
-            }
-
             attackable[index] = group_id;
             if (!IsTileFree(index, allow_water: true))
             {
@@ -708,13 +518,8 @@ public class Combat : MonoBehaviour
             // we're dealing with an enemy
             var pos = (Vector3)GetTilePos(robot.x, robot.y);
             pos.z = 10f;
-            if (robot.plan.is_valid) {
-                var target_x = robot.plan.move_to_tile % _board_size;
-                var target_y = robot.plan.move_to_tile / _board_size;
-                DebugText.Text(robot.view.transform.position, $"{robot.x};{robot.y} move to: ({target_x};{target_y}), group: {robot.plan.attack_group}");
-            } else {
-                DebugText.Text(robot.view.transform.position, $"No plan");
-            }
+            DebugText.Text(robot.view.transform.position, $"moving to: {robot.plan.move_to_tile}, group: {robot.plan.attack_group}");
+            Debug.Log($"moving to: {robot.plan.move_to_tile}, group: {robot.plan.attack_group}");
         }
 
         //
@@ -753,11 +558,10 @@ public class Combat : MonoBehaviour
             var selected = _selected_robot_index == robot_index;
             if (selected)
             {
-                bool dummy = false;
-                if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile, ref dummy)) attack_group_id = 1;
-                if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile, ref dummy)) attack_group_id = 2;
-                if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile, ref dummy)) attack_group_id = 3;
-                if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile, ref dummy)) attack_group_id = 4;
+                if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile)) attack_group_id = 1;
+                if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile)) attack_group_id = 2;
+                if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile)) attack_group_id = 3;
+                if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile)) attack_group_id = 4;
             }
             //DebugText.Text(Vector3.zero, attack_group_id.ToString());
         }
@@ -843,9 +647,15 @@ public class Combat : MonoBehaviour
             if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free)
             {
                 var robot = _robots[_selected_robot_index];
-                robot = Move(robot, hovered_x, hovered_y);
+                robot.x = hovered_x;
+                robot.y = hovered_y;
                 _robots[_selected_robot_index] = robot;
                 _uiMode = UiMode.Select;
+                var partivjnc = robot.view.GetComponentInChildren<ParticleSystem>();
+                if (partivjnc)
+                {
+                    partivjnc.Emit(4);
+                }
             }
         }
 
@@ -941,7 +751,6 @@ public class Combat : MonoBehaviour
             {
                 Debug.Log("Battle won!");
                 _battle_won = true;
-                gameSession.CanLaunchAtelier = true;
             }
             _goal_actor.view.DammageEffect(dammage);
         }
