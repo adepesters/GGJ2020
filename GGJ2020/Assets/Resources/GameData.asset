@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ae36d566d76a49be961df0ae981bde7, type: 3}
+  m_Name: GameData
+  m_EditorClassIdentifier: Assembly-CSharp::GameData
+  Definitions:
+  - IdleAnim:
+    - {fileID: 21300000, guid: 6e40c547218c44690b09e4ab3d90ef39, type: 3}
+    - {fileID: 21300000, guid: a19fbe135885c4a3f847448ba62edbb5, type: 3}
+    - {fileID: 21300000, guid: e26a4e6e63910423a9e491852c8ef34f, type: 3}
+    - {fileID: 21300000, guid: 10fcdc49cc2c444498143f1fd49a0c3e, type: 3}
+    - {fileID: 21300000, guid: 1b8a11603eed546949f09ed890d013b1, type: 3}
+    Shadow: {fileID: 21300000, guid: 3e95bf92f9e1341d6b08dfc955d90bbd, type: 3}
+    Broken: {fileID: 21300000, guid: 4a1bf2128b30040a9a2fd4e5815fb9ea, type: 3}
+    StatsMax: 04000000050000000200000008000000
+  - IdleAnim:
+    - {fileID: 21300000, guid: 3d31d1706f488435c80a1a35cc11a63c, type: 3}
+    - {fileID: 21300000, guid: 71fe5fd2ea0e04b9abf1c60aae3e67ea, type: 3}
+    - {fileID: 21300000, guid: 7df505d53a54d43d999841b76e059034, type: 3}
+    - {fileID: 21300000, guid: dba6b23c31dd648209d550ad6e05c1e1, type: 3}
+    - {fileID: 21300000, guid: 403d398377058438f9dc8d51e9338f17, type: 3}
+    Shadow: {fileID: 21300000, guid: d912635f8b40e48c39aa262b7f5aa237, type: 3}
+    Broken: {fileID: 21300000, guid: 4a1bf2128b30040a9a2fd4e5815fb9ea, type: 3}
+    StatsMax: 04000000030000000600000003000000
+  - IdleAnim:
+    - {fileID: 21300000, guid: fdc4f43cebfd54ffa82ef0669e42ab35, type: 3}
+    - {fileID: 21300000, guid: 1778e9895b4874f17a8fecf5809142df, type: 3}
+    - {fileID: 21300000, guid: 2d964e8dd02e44c48aadb0cc7bd3260a, type: 3}
+    - {fileID: 21300000, guid: e5bbd9256247748458e1df7b80e3a1c9, type: 3}
+    - {fileID: 21300000, guid: c5ca73f42cee14d709a7242d0b063978, type: 3}
+    Shadow: {fileID: 21300000, guid: b30bc273beda9443995a4d4c461cd46e, type: 3}
+    Broken: {fileID: 21300000, guid: 4a1bf2128b30040a9a2fd4e5815fb9ea, type: 3}
+    StatsMax: 05000000040000000200000005000000

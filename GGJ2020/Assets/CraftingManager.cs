@@ -1,11 +1,11 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class CraftingManager : MonoBehaviour
 {
-    int[] robotSlot = new int[3];
+    int[] robotSlot = new int[3]; // index of the robot in each slot. -1 means no robot
     int[] energy = new int[3];
     int[] action = new int[3];
     int[] chance = new int[3];
@@ -66,6 +66,15 @@ public class CraftingManager : MonoBehaviour
 
         hasBeenDiscovered[0] = true;
         hasBeenDiscovered[1] = true;
+        hasBeenDiscovered[2] = true;
+        hasBeenDiscovered[3] = true;
+
+
+
+        // Clear the slots at the begining of the game 
+        for (int i = 0; i < robotSlot.Length; i++) {
+            robotSlot[i] = -1; // -1 means no robot
+        }
     }
 
     // Update is called once per frame
@@ -91,8 +100,8 @@ public class CraftingManager : MonoBehaviour
         slot3ChanceMask.GetComponent<Image>().fillAmount = 1f - chance[2] / 10f;
         slot3SpeedMask.GetComponent<Image>().fillAmount = 1f - speed[2] / 10f;
 
-        //DebugText.Text(new Vector2(transform.position.x - 100, -95), robotSlot[0].ToString());
-        //DebugText.Text(new Vector2(transform.position.x, -95), robotSlot[1].ToString());
-        //DebugText.Text(new Vector2(transform.position.x + 100, -95), robotSlot[2].ToString());
+        DebugText.Text(new Vector2(transform.position.x - 100, -95), robotSlot[0].ToString());
+        DebugText.Text(new Vector2(transform.position.x, -95), robotSlot[1].ToString());
+        DebugText.Text(new Vector2(transform.position.x + 100, -95), robotSlot[2].ToString());
     }
 }
