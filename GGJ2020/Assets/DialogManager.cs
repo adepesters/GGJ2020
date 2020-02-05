@@ -22,6 +22,8 @@ public class DialogManager : MonoBehaviour
     [SerializeField] AudioClip[] voicesBoy;
     [SerializeField] AudioClip[] voicesGirl;
 
+    bool canDisplayDialogs = true;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -46,7 +48,7 @@ public class DialogManager : MonoBehaviour
     {
         if (gameSession.GameHasStarted)
         {
-            if (dialogIntroCoroutine == null)
+            if (dialogIntroCoroutine == null && canDisplayDialogs)
             {
                 dialogIntroCoroutine = StartCoroutine(DialogIntro());
             }
@@ -54,6 +56,20 @@ public class DialogManager : MonoBehaviour
         else
         {
             dialogPanel.GetComponent<Image>().enabled = false;
+        }
+
+        if (GameObject.Find("MainRoom") == null)
+        {
+            //StopCoroutine(dialogCoroutine);
+            //GetComponent<AudioSource>().Stop();
+            canDisplayDialogs = false;
+        }
+
+        if (!canDisplayDialogs)
+        {
+            StopCoroutine(dialogCoroutine);
+            dialogPanel.GetComponent<Image>().enabled = false;
+            GetComponent<AudioSource>().Stop();
         }
 
         //if (dialogCoroutine != null)
