@@ -1827,6 +1827,7 @@ MonoBehaviour:
   newGamePanel: {fileID: 1640287803}
   mapContainer: {fileID: 8651003974756237020}
   neonSound: {fileID: 8300000, guid: d0b460f79775e40f1b2049f0fa41b457, type: 3}
+  titleContainter: {fileID: 8651003975385005678}
   myAnimationCurve:
     serializedVersion: 2
     m_Curve:

@@ -12,6 +12,7 @@ public class NewGameButton : MonoBehaviour
     [SerializeField] GameObject newGamePanel;
     [SerializeField] GameObject mapContainer;
     [SerializeField] AudioClip neonSound;
+    [SerializeField] GameObject titleContainter;
 
     GameSession gameSession;
 
@@ -63,6 +64,7 @@ public class NewGameButton : MonoBehaviour
     IEnumerator LaunchSong()
     {
         yield return new WaitForSeconds(1.5f);
+        titleContainter.SetActive(false);
         transform.GetChild(0).GetComponent<AudioSource>().PlayOneShot(song);
         transform.GetChild(0).GetComponent<AudioSource>().loop = false;
     }
