@@ -96,6 +96,8 @@ public class Combat : MonoBehaviour
 
         _robots.Clear();
         _rocks.Clear();
+        _reachable.Clear();
+        _attackable.Clear();
 
         for(int i = tiles_container.childCount - 1; i >= 0; i--) {
             Destroy(tiles_container.GetChild(i).gameObject);
@@ -649,11 +651,11 @@ public class Combat : MonoBehaviour
         }
     }
 
-    void DiscoverTile(int[] _distances, int tile_index, int distance)
+    void DiscoverTile(int[] distances, int tile_index, int distance)
     {
-        if (_distances[tile_index] > distance)
+        if (distances[tile_index] > distance)
         {
-            _distances[tile_index] = distance;
+            distances[tile_index] = distance;
 
             distance++;
 
@@ -665,7 +667,7 @@ public class Combat : MonoBehaviour
                 var left = tile_index - 1;
                 if (IsTileFree(left))
                 {
-                    DiscoverTile(_distances, left, distance);
+                    DiscoverTile(distances, left, distance);
                 }
             }
 
@@ -674,7 +676,7 @@ public class Combat : MonoBehaviour
                 var right = tile_index + 1;
                 if (IsTileFree(right))
                 {
-                    DiscoverTile(_distances, right, distance);
+                    DiscoverTile(distances, right, distance);
                 }
             }
 
@@ -683,7 +685,7 @@ public class Combat : MonoBehaviour
                 var bottom = tile_index - _board_size;
                 if (IsTileFree(bottom))
                 {
-                    DiscoverTile(_distances, bottom, distance);
+                    DiscoverTile(distances, bottom, distance);
                 }
             }
 
@@ -692,7 +694,7 @@ public class Combat : MonoBehaviour
                 var top = tile_index + _board_size;
                 if (IsTileFree(top))
                 {
-                    DiscoverTile(_distances, top, distance);
+                    DiscoverTile(distances, top, distance);
                 }
             }
         }
