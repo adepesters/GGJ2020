@@ -6998,6 +6998,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6375034690116670444}
   - component: {fileID: 571847056147649713}
+  - component: {fileID: 50801909}
   m_Layer: 0
   m_Name: Combat
   m_TagString: Untagged
@@ -7057,6 +7058,102 @@ MonoBehaviour:
   tiles_container: {fileID: 7682848576873505318}
   _battle_won: 0
   _currentSpawnRobotSlot: 0
+--- !u!82 &50801909
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2479146074802816797}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &2727180554435941188
 GameObject:
   m_ObjectHideFlags: 0
@@ -7986,7 +8083,7 @@ Transform:
   m_Father: {fileID: 5439423227851832060}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8210052727951547096
+--- !u!1 &7649965563124279664
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -7994,23 +8091,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5423721148242793815}
-  - component: {fileID: 9192691559968838900}
-  - component: {fileID: 4461205349586942950}
+  - component: {fileID: 8548083250610403457}
+  - component: {fileID: 293093842677799767}
+  - component: {fileID: 8887877931724027769}
   m_Layer: 0
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &5423721148242793815
+  m_IsActive: 1
+--- !u!4 &8548083250610403457
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8210052727951547096}
+  m_GameObject: {fileID: 7649965563124279664}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -2, y: 3.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -8018,13 +8115,13 @@ Transform:
   m_Father: {fileID: 5439423227851832060}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!198 &9192691559968838900
+--- !u!198 &293093842677799767
 ParticleSystem:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8210052727951547096}
+  m_GameObject: {fileID: 7649965563124279664}
   serializedVersion: 6
   lengthInSec: 5
   simulationSpeed: 1
@@ -8034,7 +8131,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -8846,7 +8943,7 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
   EmissionModule:
-    enabled: 1
+    enabled: 0
     serializedVersion: 4
     rateOverTime:
       serializedVersion: 2
@@ -12685,14 +12782,14 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
---- !u!199 &4461205349586942950
+--- !u!199 &8887877931724027769
 ParticleSystemRenderer:
   serializedVersion: 6
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8210052727951547096}
+  m_GameObject: {fileID: 7649965563124279664}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -12777,7 +12874,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4959830443546254974}
-  - {fileID: 5423721148242793815}
+  - {fileID: 8548083250610403457}
   - {fileID: 2337849486564710107}
   - {fileID: 4280967223717754436}
   - {fileID: 5574061092745233819}
@@ -12908,6 +13005,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 449334876}
     m_Modifications:
+    - target: {fileID: 4397832080063476460, guid: a096889effb11453d84516f7b9a256f0,
+        type: 3}
+      propertyPath: m_Name
+      value: Health View
+      objectReference: {fileID: 0}
     - target: {fileID: 5844450130585044423, guid: a096889effb11453d84516f7b9a256f0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -13012,11 +13114,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4397832080063476460, guid: a096889effb11453d84516f7b9a256f0,
-        type: 3}
-      propertyPath: m_Name
-      value: Health View
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a096889effb11453d84516f7b9a256f0, type: 3}
