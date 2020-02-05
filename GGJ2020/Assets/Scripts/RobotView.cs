@@ -76,6 +76,7 @@ public class RobotView : MonoBehaviour
             var color = _sprite_renderer.color;
             color.a = Mathf.MoveTowards(_sprite_renderer.color.a, 0f, Time.smoothDeltaTime);
             _sprite_renderer.color = color;
+            _shadow.color = new Color(1,1,1, color.a);
             
             foreach(var e in _health_elements) {
                 var c = e.color;
@@ -89,10 +90,8 @@ public class RobotView : MonoBehaviour
                 e.color = c;
             }
 
-            Debug.Log(_sprite_renderer.color);
             yield return null;
         }
-        //Destroy(gameObject);
     }
 
     public void DammageEffect(int dammage)

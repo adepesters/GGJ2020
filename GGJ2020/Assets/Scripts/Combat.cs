@@ -254,7 +254,8 @@ public class Combat : MonoBehaviour
 
         _move_button.onClick.AddListener(() =>
         {
-            if (_selected_robot_index >= 0 && _robots[_selected_robot_index].current_hp > 0 && !_battle_won)
+            var robot = _robots[_selected_robot_index];
+            if (_selected_robot_index >= 0 && robot.current_hp > 0 && robot.friend && !_battle_won)
             {
                 _uiMode = UiMode.Move;
             }
@@ -262,7 +263,8 @@ public class Combat : MonoBehaviour
 
         _action_button.onClick.AddListener(() =>
         {
-            if (_selected_robot_index >= 0 && _robots[_selected_robot_index].current_hp > 0 && !_battle_won)
+            var robot = _robots[_selected_robot_index];
+            if (_selected_robot_index >= 0 && robot.current_hp > 0 && robot.friend && !_battle_won)
             {
                 _uiMode = UiMode.Attack;
             }
@@ -326,7 +328,7 @@ public class Combat : MonoBehaviour
         for (int i = 0; i < _robots.Count; i++)
         {
             var robot = _robots[i];
-            if (robot.friend)
+            if (robot.friend || robot.dead)
             {
                 continue;
             }
@@ -377,6 +379,7 @@ public class Combat : MonoBehaviour
             //robot.plan.attack_group = best_group;
             var dest_x = dest_index % _board_size;
             var dest_y = dest_index / _board_size;
+
             robot = Move(robot, dest_x, dest_y);
 
             _robots[i] = robot;
@@ -881,7 +884,14 @@ public class Combat : MonoBehaviour
             if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && hovered_tile_is_free)
             {
                 var robot = _robots[_selected_robot_index];
-                robot = Move(robot, hovered_x, hovered_y);
+
+                var reachable_table = _reachable[_selected_robot_index];
+                var reachable = reachable_table[hovered_tile] <= robot.movement_range;
+
+                if (reachable) {
+                    robot = Move(robot, hovered_x, hovered_y);
+                }
+
                 _robots[_selected_robot_index] = robot;
                 _uiMode = UiMode.Select;
             }
