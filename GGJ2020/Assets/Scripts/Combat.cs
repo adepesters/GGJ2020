@@ -23,6 +23,7 @@ public struct Actor
     public List<int> plop;
     public bool friend;
     public Plan plan;
+    public bool dead;
 }
 
 public struct Robot
@@ -953,6 +954,7 @@ public class Combat : MonoBehaviour
                 if (rock.actor.current_hp <= 0)
                 {
                     Debug.Log("A rock was KILLED!!!");
+                    rock.actor.dead = true;
                 }
                 _rocks[i] = rock;
             }
@@ -966,16 +968,17 @@ public class Combat : MonoBehaviour
                 if (robot.current_hp <= 0)
                 {
                     Debug.Log("A robot was KILLED!!!");
+                    robot.dead = true;
+
+                    if (!robot.friend) {
+                        robot.view.FadeOut();
+                        //_robots.RemoveAt(i);
+                    }
                 }
                 robot.view.DammageEffect(dammage);
                 _robots[i] = robot;
 
                 robot.view.RefreshHealth(robot.max_hp, robot.current_hp);
-
-                if (!robot.friend) {
-                    robot.view.FadeOut();
-                    _robots.RemoveAt(i);
-                }
             }
         }
 
@@ -1030,7 +1033,7 @@ public class Combat : MonoBehaviour
         for (int i = 0; i < _robots.Count; i++)
         {
             var actor = _robots[i];
-            if (CoordsToIndex(actor.x, actor.y) == index)
+            if (actor.dead == false && CoordsToIndex(actor.x, actor.y) == index)
             {
                 return false;
             }
