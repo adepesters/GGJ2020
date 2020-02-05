@@ -24,6 +24,8 @@ public struct Actor
     public bool friend;
     public Plan plan;
     public bool dead;
+    public bool has_moved;
+    public bool has_shot;
 }
 
 public struct Robot
@@ -286,6 +288,13 @@ public class Combat : MonoBehaviour
     {
         yield return EnemiesPlan();
         //yield return EnemiesExecutePlannedMove();
+
+        // reset has moved
+        for (int i = 0; i < _robots.Count; i++) {
+            var robot = _robots[i];
+            robot.has_moved = false;
+            _robots[i] = robot;
+        }
     }
 
     IEnumerator EnemiesExecutePlannedMove()
@@ -318,6 +327,7 @@ public class Combat : MonoBehaviour
         {
             partivjnc.Emit(4);
         }
+        actor.has_moved = true;
 
         return actor;
     }
@@ -688,7 +698,7 @@ public class Combat : MonoBehaviour
 
             foreach (var r in _robots)
             {
-                if (r.friend) met_friend = true;
+                if (!r.dead && r.friend) met_friend = true;
             }
 
             attackable[index] = group_id;
@@ -708,7 +718,7 @@ public class Combat : MonoBehaviour
         bool at_least_one_friend_alive = false;
 
         foreach(var r in _robots) {
-            if (r.friend && r.current_hp > 0) {
+            if (r.friend && !r.dead) {
                 at_least_one_friend_alive = true;
             }
         }
@@ -732,9 +742,13 @@ public class Combat : MonoBehaviour
         {
             hovered_tile = hovered_y * _board_size + hovered_x;
         }
-
         bool hovered_tile_is_free = IsTileFree(hovered_tile);
 
+
+        //
+        // Debug enemies plan
+        //
+        /* 
         for (int i = 0; i < _robots.Count; i++)
         {
             var robot = _robots[i];
@@ -757,6 +771,7 @@ public class Combat : MonoBehaviour
                 DebugText.Text(robot.view.transform.position, $"No plan");
             }
         }
+        */
 
         //
         // Update reachable tiles for each robot
@@ -764,6 +779,9 @@ public class Combat : MonoBehaviour
         for (int i = 0; i < _robots.Count; i++)
         {
             var actor = _robots[i];
+            if(actor.dead)
+                continue;
+
             var reachable = _reachable[i];
 
             // clear reachable table
@@ -784,6 +802,8 @@ public class Combat : MonoBehaviour
             //UpdateAttackableTable(attackableTable, robot_index);
             var attackable_table = _attackable[robot_index];
             var robot = _robots[robot_index];
+            if(robot.dead)
+                continue;
 
             // clear attackable table
             for (int j = 0; j < attackable_table.Length; j++)
@@ -915,6 +935,8 @@ public class Combat : MonoBehaviour
                         {
                             dammage_tile(tile_index, 1);
                             GetComponent<AudioSource>().PlayOneShot(attackSounds[Random.Range(0, attackSounds.Length)]);
+                            robot.has_shot = true;
+                            _robots[_selected_robot_index] = robot; // NOTE: there would be a risk of overriding stuff done in dammage_tile here.
                         }
                     }
                 }
@@ -949,8 +971,19 @@ public class Combat : MonoBehaviour
             // }
         }
 
+        //
         // Update other health counters
+        //
         _goal_actor.view.RefreshHealth(_goal_actor.max_hp, _goal_actor.current_hp);
+
+        //
+        // Update user interface
+        //
+        {
+            var robot = _robots[_selected_robot_index];
+            _move_button.interactable = !robot.has_moved;
+            _action_button.interactable = !robot.has_shot;
+        }
     }
 
     void dammage_tile(int tile_index, int dammage)
@@ -958,6 +991,8 @@ public class Combat : MonoBehaviour
         for (int i = 0; i < _rocks.Count; i++)
         {
             var rock = _rocks[i];
+            if(rock.actor.dead)
+                continue;
             if (CoordsToIndex(rock.actor.x, rock.actor.y) == tile_index)
             {
                 rock.actor.current_hp--;
@@ -972,6 +1007,9 @@ public class Combat : MonoBehaviour
         for (int i = 0; i < _robots.Count; i++)
         {
             var robot = _robots[i];
+            if(robot.dead)
+                continue;
+
             if (CoordsToIndex(robot.x, robot.y) == tile_index)
             {
                 robot.current_hp--;
