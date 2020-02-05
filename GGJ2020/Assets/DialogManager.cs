@@ -29,6 +29,8 @@ public class DialogManager : MonoBehaviour
     {
         gameSession = GameObject.FindWithTag("GameSession").GetComponent<GameSession>();
 
+        dialogPanel.GetComponent<Image>().enabled = false;
+
         line[0] = "Ce soir...je vais conquérir le monde !";
         line[1] = "Même pas en rêve tronche de cake.";
         line[2] = "Si! Je vais gagner, sale caca boudin !";
@@ -46,33 +48,31 @@ public class DialogManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (gameSession.GameHasStarted)
-        {
-            if (dialogIntroCoroutine == null && canDisplayDialogs)
+        if (gameSession.GameHasStarted && dialogIntroCoroutine == null && canDisplayDialogs)
             {
-                dialogIntroCoroutine = StartCoroutine(DialogIntro());
+            dialogIntroCoroutine = StartCoroutine(DialogIntro());
+                canDisplayDialogs = false;
             }
-        }
-        else
-        {
-            dialogPanel.GetComponent<Image>().enabled = false;
-        }
+        //else
+        //{
+        //    dialogPanel.GetComponent<Image>().enabled = false;
+        //}
 
-        if (GameObject.Find("MainRoom") == null)
-        {
-            //StopCoroutine(dialogCoroutine);
-            //GetComponent<AudioSource>().Stop();
-            canDisplayDialogs = false;
-        }
+        //if (GameObject.Find("MainRoom") == null)
+        //{
+        //    //StopCoroutine(dialogCoroutine);
+        //    //GetComponent<AudioSource>().Stop();
+        //    canDisplayDialogs = false;
+        //}
 
-        if (!canDisplayDialogs)
-        {
-            if (dialogCoroutine != null) {
-                StopCoroutine(dialogCoroutine);
-            }
-            dialogPanel.GetComponent<Image>().enabled = false;
-            GetComponent<AudioSource>().Stop();
-        }
+        //if (!canDisplayDialogs)
+        //{
+        //    if (dialogCoroutine != null) {
+        //        StopCoroutine(dialogCoroutine);
+        //    }
+        //    dialogPanel.GetComponent<Image>().enabled = false;
+        //    GetComponent<AudioSource>().Stop();
+        //}
 
         //if (dialogCoroutine != null)
         //{
