@@ -1017,7 +1017,7 @@ public class Combat : MonoBehaviour
         {
             for (int x = 0; x < _board_size; x++, tile_index++)
             {       
-                DebugText.Text(GetTilePos(x,y), attackable_table[tile_index].ToString());
+                //DebugText.Text(GetTilePos(x,y), attackable_table[tile_index].ToString());
                 if (attackable_table[tile_index] == attack_group_id)
                 {
                     dammage_tile(tile_index, 1);

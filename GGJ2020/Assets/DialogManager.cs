@@ -67,7 +67,9 @@ public class DialogManager : MonoBehaviour
 
         if (!canDisplayDialogs)
         {
-            StopCoroutine(dialogCoroutine);
+            if (dialogCoroutine != null) {
+                StopCoroutine(dialogCoroutine);
+            }
             dialogPanel.GetComponent<Image>().enabled = false;
             GetComponent<AudioSource>().Stop();
         }
