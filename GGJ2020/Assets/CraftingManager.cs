@@ -59,9 +59,9 @@ public class CraftingManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        crystalsAmount[0] = 6;
-        crystalsAmount[1] = 6;
-        crystalsAmount[2] = 6;
+        crystalsAmount[0] = 7;
+        crystalsAmount[1] = 2;
+        crystalsAmount[2] = 1;
         crystalsAmount[3] = 6;
 
         hasBeenDiscovered[0] = true;

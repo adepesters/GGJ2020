@@ -67,10 +67,8 @@ public class GameSession : MonoBehaviour
         if (canLaunchMainRoom)
         {
             canLaunchMainRoom = false;
-            combat.SetActive(false);
-            atelier.SetActive(false);
-            mainRoom.SetActive(true);
-            death.SetActive(false);
+
+            StartCoroutine(MainRoomDelayed());
         }
 
         if (canLaunchAtelier)
@@ -87,6 +85,22 @@ public class GameSession : MonoBehaviour
             StartCoroutine(RelaunchGame());
         }
 
+    }
+
+    IEnumerator MainRoomDelayed()
+    {
+        var manager = FindObjectOfType<CraftingManager>();
+        manager.CrystalsAmount[0] += 1;
+        manager.CrystalsAmount[1] += 0;
+        manager.CrystalsAmount[2] += 0;
+        manager.CrystalsAmount[3] += 1;
+
+        yield return new WaitForSeconds(1.0f);
+
+        combat.SetActive(false);
+        atelier.SetActive(false);
+        mainRoom.SetActive(true);
+        death.SetActive(false);
     }
 
     IEnumerator RelaunchGame()

@@ -638,7 +638,7 @@ public class Combat : MonoBehaviour
                     _goal_actor = new Actor();
                     _goal_actor.x = x;
                     _goal_actor.y = y;
-                    _goal_actor.max_hp = 3;
+                    _goal_actor.max_hp = 2;
                     _goal_actor.current_hp = _goal_actor.max_hp;
                     _goal_actor.view = goal.GetComponentInChildren<RobotView>();
                 }
