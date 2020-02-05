@@ -289,10 +289,11 @@ public class Combat : MonoBehaviour
         yield return EnemiesPlan();
         //yield return EnemiesExecutePlannedMove();
 
-        // reset has moved
+        // reset turn vars
         for (int i = 0; i < _robots.Count; i++) {
             var robot = _robots[i];
             robot.has_moved = false;
+            robot.has_shot = false;
             _robots[i] = robot;
         }
     }
@@ -365,6 +366,7 @@ public class Combat : MonoBehaviour
             }
 
             int dest_index = -1;
+            int current_group_id = -1;
             for (int iter = 0; iter < 8; iter++) {
                 dest_index = candidates[Random.Range(0, candidates.Count)];
 
@@ -374,11 +376,26 @@ public class Combat : MonoBehaviour
                 var temp_attackable = new int[_tile_count];
 
                 bool met_friend = false;
-                Tilecast(temp_attackable, x, y, 1, 0, group_id: 1, -1, ref met_friend);
-                Tilecast(temp_attackable, x, y, -1, 0, group_id: 2, -1, ref met_friend);
-                Tilecast(temp_attackable, x, y, 0, 1, group_id: 3, -1, ref met_friend);
-                Tilecast(temp_attackable, x, y, 0, -1, group_id: 4, -1, ref met_friend);
 
+                current_group_id = 1;
+                Tilecast(temp_attackable, x, y, 1, 0, current_group_id, -1, ref met_friend); 
+                if (met_friend) goto after_tilecast;
+
+                current_group_id = 2;
+                Tilecast(temp_attackable, x, y, -1, 0, current_group_id, -1, ref met_friend);
+                if (met_friend) goto after_tilecast;
+
+                current_group_id = 3;
+                Tilecast(temp_attackable, x, y, 0, 1, current_group_id, -1, ref met_friend);
+                if (met_friend) goto after_tilecast;
+                
+                current_group_id = 4;
+                Tilecast(temp_attackable, x, y, 0, -1, current_group_id, -1, ref met_friend);
+                if (met_friend) goto after_tilecast;
+
+                current_group_id = 0; // no attack
+
+                after_tilecast:
                 if (met_friend) {
                     break;
                 }
@@ -393,6 +410,11 @@ public class Combat : MonoBehaviour
             robot = Move(robot, dest_x, dest_y);
 
             _robots[i] = robot;
+
+            if (current_group_id != 0) {
+                yield return new WaitForSeconds(0.2f);
+                apply_attack(i, current_group_id);
+            }
 
             yield return new WaitForSeconds(0.5f);
         }
@@ -491,8 +513,6 @@ public class Combat : MonoBehaviour
 
     void AddRobot(int x, int y, int movement_range, bool friend = true, int robot_index = -1)
     {
-
-        Debug.Log("ADDING ROBOT");
         Actor actor = new Actor();
         actor.x = x;
         actor.y = y;
@@ -679,14 +699,14 @@ public class Combat : MonoBehaviour
         }
     }
 
-    bool Tilecast(int[] attackable, int start_x, int start_y, int d_x, int d_y, int group_id, int hovered_index, ref bool met_friend)
+    bool Tilecast(int[] attackable, int x, int y, int d_x, int d_y, int group_id, int hovered_index, ref bool met_friend)
     {
         bool met_hovered_tile = false;
         while (true)
         {
-            start_x += d_x;
-            start_y += d_y;
-            int index = CoordsToIndex(start_x, start_y);
+            x += d_x;
+            y += d_y;
+            int index = CoordsToIndex(x, y);
             if (index == hovered_index && index != -1)
             {
                 met_hovered_tile = true;
@@ -698,7 +718,11 @@ public class Combat : MonoBehaviour
 
             foreach (var r in _robots)
             {
-                if (!r.dead && r.friend) met_friend = true;
+                if (r.x == x && r.y == y) {
+                    if (!r.dead && r.friend) {
+                        met_friend = true;
+                    }
+                }
             }
 
             attackable[index] = group_id;
@@ -811,16 +835,18 @@ public class Combat : MonoBehaviour
                 attackable_table[j] = 0;
             }
 
+            int temp_attack_group_id = 0;
+            bool dummy = false;
+            if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile, ref dummy)) temp_attack_group_id = 1;
+            if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile, ref dummy)) temp_attack_group_id = 2;
+            if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile, ref dummy)) temp_attack_group_id = 3;
+            if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile, ref dummy)) temp_attack_group_id = 4;
+
             var selected = _selected_robot_index == robot_index;
-            if (selected)
-            {
-                bool dummy = false;
-                if (Tilecast(attackable_table, robot.x, robot.y, 1, 0, group_id: 1, hovered_tile, ref dummy)) attack_group_id = 1;
-                if (Tilecast(attackable_table, robot.x, robot.y, -1, 0, group_id: 2, hovered_tile, ref dummy)) attack_group_id = 2;
-                if (Tilecast(attackable_table, robot.x, robot.y, 0, 1, group_id: 3, hovered_tile, ref dummy)) attack_group_id = 3;
-                if (Tilecast(attackable_table, robot.x, robot.y, 0, -1, group_id: 4, hovered_tile, ref dummy)) attack_group_id = 4;
+            if (selected) {
+                attack_group_id = temp_attack_group_id;
             }
-            //DebugText.Text(Vector3.zero, attack_group_id.ToString());
+            
         }
 
         //
@@ -924,22 +950,7 @@ public class Combat : MonoBehaviour
         {
             if (hovered_tile >= 0 && Input.GetMouseButtonDown(0) && attack_group_id != 0)
             {
-                var robot = _robots[_selected_robot_index];
-
-                for (int tile_index = 0, y = 0; y < _board_size; y++)
-                {
-                    for (int x = 0; x < _board_size; x++, tile_index++)
-                    {
-                        var attackable_table = _attackable[_selected_robot_index];
-                        if (attackable_table[tile_index] == attack_group_id)
-                        {
-                            dammage_tile(tile_index, 1);
-                            GetComponent<AudioSource>().PlayOneShot(attackSounds[Random.Range(0, attackSounds.Length)]);
-                            robot.has_shot = true;
-                            _robots[_selected_robot_index] = robot; // NOTE: there would be a risk of overriding stuff done in dammage_tile here.
-                        }
-                    }
-                }
+                apply_attack(_selected_robot_index, attack_group_id);
 
                 _uiMode = UiMode.Select;
             }
@@ -983,6 +994,35 @@ public class Combat : MonoBehaviour
             var robot = _robots[_selected_robot_index];
             _move_button.interactable = !robot.has_moved;
             _action_button.interactable = !robot.has_shot;
+        }
+    }
+
+    void apply_attack(int _selected_robot_index, int attack_group_id)
+    {
+        GetComponent<AudioSource>().PlayOneShot(attackSounds[Random.Range(0, attackSounds.Length)]);
+
+        var robot = _robots[_selected_robot_index];
+        robot.has_shot = true;
+        _robots[_selected_robot_index] = robot; // NOTE: there would be a risk of overriding stuff done in dammage_tile here.                }
+
+        Debug.Log("apply attack with id " + attack_group_id);
+
+        if (attack_group_id == 0) {
+            return;
+        }
+        //Debug.Break();
+
+        var attackable_table = _attackable[_selected_robot_index];
+        for (int tile_index = 0, y = 0; y < _board_size; y++)
+        {
+            for (int x = 0; x < _board_size; x++, tile_index++)
+            {       
+                DebugText.Text(GetTilePos(x,y), attackable_table[tile_index].ToString());
+                if (attackable_table[tile_index] == attack_group_id)
+                {
+                    dammage_tile(tile_index, 1);
+                }
+            }
         }
     }
 

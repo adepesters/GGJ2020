@@ -32,7 +32,10 @@ public class DebugText : MonoBehaviour
             GUI.color = prevCol;
             GUI.Label(rect, item.Text, style);
         }
+    }
 
+    void Update()
+    {
         s_debugTextCommands.Clear();
     }
 }
