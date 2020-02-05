@@ -88,6 +88,8 @@ public class Combat : MonoBehaviour
     public bool _battle_won = false;
     public int _currentSpawnRobotSlot = 0;
 
+    private CraftingManager _craftingManager;
+
     public void ResetGame() {
         _battle_won = false;
         _currentSpawnRobotSlot = 0;
@@ -241,18 +243,19 @@ public class Combat : MonoBehaviour
 
     string _level_data;
 
-    GameSession gameSession;
+    GameSession _gameSession;
 
     void OnEnable()
     {
         ResetGame();
 
-        gameSession = GameObject.Find("GameSession").GetComponent<GameSession>();
+        _gameSession = GameObject.Find("GameSession").GetComponent<GameSession>();
+        _craftingManager = FindObjectOfType<CraftingManager>();
 
         _robotTemplate.gameObject.SetActive(false);
         _enemyTemplate.gameObject.SetActive(false);
 
-        GenerateTerrain(gameSession.SelectedLevel);
+        GenerateTerrain(_gameSession.SelectedLevel);
 
         _move_button.onClick.AddListener(() =>
         {
@@ -516,32 +519,38 @@ public class Combat : MonoBehaviour
         Actor actor = new Actor();
         actor.x = x;
         actor.y = y;
-        actor.movement_range = movement_range;
-        actor.max_hp = 3;
-        actor.current_hp = 3;
         actor.friend = friend;
         actor.robot_index = robot_index;
         var template = friend ? _robotTemplate : _enemyTemplate;
         actor.view = Instantiate(template, tiles_container);
         actor.view.gameObject.SetActive(true);
         if (robot_index != -1) {
+            // Friend robot stats
             var gameData =  Resources.Load<GameData>("GameData");
             var def = gameData.Definitions[robot_index];
             actor.view.SkinBot(def);
-            actor.max_hp = def.StatsMax[0];
-            actor.current_hp = def.StatsMax[0];
+            actor.max_hp = _craftingManager.Energy[robot_index];
+            actor.current_hp = actor.max_hp;
+            actor.movement_range = _craftingManager.Speed[robot_index];
         } else {
+            // Enemy robot stats
             var gameData =  Resources.Load<GameData>("GameData");
             var def = gameData.Enemies[0];
             actor.view.SkinBot(def);
             actor.max_hp = def.StatsMax[0];
             actor.current_hp = def.StatsMax[0];
+            actor.movement_range = 1;
         }
         _robots.Add(actor);
 
         _reachable.Add(new int[_tile_count]);
         _attackable.Add(new int[_tile_count]);
     }
+
+    // void RobotApplyDefinition(ref Actor actor, RobotDefinition definition)
+    // {
+        
+    // }
 
     Vector2 GetTilePos(int x, int y)
     {
@@ -600,7 +609,7 @@ public class Combat : MonoBehaviour
                 if (tile_char == SPAWN)
                 {
                     // friend robot
-                    var robot_index = FindObjectOfType<CraftingManager>().RobotSlot[_currentSpawnRobotSlot];
+                    var robot_index = _craftingManager.RobotSlot[_currentSpawnRobotSlot];
                     if (robot_index != -1) {
                         AddRobot(x, y, 2, friend: true, robot_index);
                         _currentSpawnRobotSlot++;
@@ -747,7 +756,7 @@ public class Combat : MonoBehaviour
             }
         }
         if (!at_least_one_friend_alive) {
-            gameSession.CanLaunchGameOver = true;
+            _gameSession.CanLaunchGameOver = true;
         }
 
         //
@@ -1077,7 +1086,7 @@ public class Combat : MonoBehaviour
             {
                 Debug.Log("Battle won!");
                 _battle_won = true;
-                gameSession.CanLaunchMainRoom = true;
+                _gameSession.CanLaunchMainRoom = true;
             }
             _goal_actor.view.DammageEffect(dammage);
         }
