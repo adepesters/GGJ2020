@@ -20,6 +20,8 @@ public class GameSession : MonoBehaviour
     [SerializeField] GameObject mainRoom;
     [SerializeField] GameObject death;
 
+    DialogManager dialogManager;
+
     public bool GameHasStarted { get => gameHasStarted; set => gameHasStarted = value; }
     public bool IntroDialogOver { get => introDialogOver; set => introDialogOver = value; }
     public int SelectedLevel { get => selectedLevel; set => selectedLevel = value; }
@@ -44,6 +46,9 @@ public class GameSession : MonoBehaviour
         atelier.SetActive(false);
         mainRoom.SetActive(true);
         death.SetActive(false);
+
+        dialogManager = GameObject.FindGameObjectWithTag("DialogManager").GetComponent<DialogManager>();
+        dialogManager.CanDisplayDialogs = true;
     }
 
     // Update is called once per frame
@@ -57,6 +62,7 @@ public class GameSession : MonoBehaviour
 
         if (CanLaunchLevel)
         {
+            dialogManager.CanDisplayDialogs = false; 
             CanLaunchLevel = false;
             combat.SetActive(true);
             atelier.SetActive(false);
@@ -66,6 +72,7 @@ public class GameSession : MonoBehaviour
 
         if (canLaunchMainRoom)
         {
+            
             canLaunchMainRoom = false;
 
             StartCoroutine(MainRoomDelayed());
@@ -73,6 +80,7 @@ public class GameSession : MonoBehaviour
 
         if (canLaunchAtelier)
         {
+            dialogManager.CanDisplayDialogs = false;
             canLaunchAtelier = false;
             combat.SetActive(false);
             atelier.SetActive(true);
